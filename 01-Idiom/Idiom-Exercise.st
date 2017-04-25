@@ -36,26 +36,20 @@ test02RemovingCustomerShouldNotTakeMoreThan100Milliseconds
 	
 ! !
 
-!IdiomTest methodsFor: 'testing' stamp: 'AM 4/22/2017 20:57:03'!
+!IdiomTest methodsFor: 'testing' stamp: 'AM 4/24/2017 22:36:46'!
 test03CanNotAddACustomerWithEmptyName 
 
 	| customerBook |
 			
 	customerBook := CustomerBook new.
-
-	"[ customerBook addCustomerNamed: ''.
-	self fail ]
-		on: Error 
-		do: [ :anError | 
-			self assert: anError messageText = CustomerBook customerCanNotBeEmptyErrorMessage.
-			self assert: customerBook isEmpty ]"
 		
-	self assert: [customerBook addCustomerNamed: ''] shouldFailOn: Error knowingThat: [:anError | anError messageText = CustomerBook customerCanNotBeEmptyErrorMessage].
-	self assert: [customerBook addCustomerNamed: ''] shouldFailOn: Error knowingThat: [customerBook isEmpty].
-	 
-	"Me gustaría pasarle una lista de aserciones pero así queda más declarativo."! !
+	self
+		assert: [customerBook addCustomerNamed: '']
+		shouldFailOn: Error
+		knowingThat: [:anError | anError messageText = CustomerBook customerCanNotBeEmptyErrorMessage]
+		and: [customerBook isEmpty].! !
 
-!IdiomTest methodsFor: 'testing' stamp: 'AM 4/22/2017 20:42:08'!
+!IdiomTest methodsFor: 'testing' stamp: 'AM 4/24/2017 22:38:57'!
 test04CanNotRemoveAndInvalidCustomer
 	
 	| customerBook johnLennon |
@@ -63,28 +57,27 @@ test04CanNotRemoveAndInvalidCustomer
 	customerBook := CustomerBook new.
 	johnLennon := 'John Lennon'.
 	customerBook addCustomerNamed: johnLennon.
-	
-	"[ customerBook removeCustomerNamed: 'Paul McCartney'.
-	self fail ]
-		on: NotFound 
-		do: [ :anError | 
-			self assert: customerBook numberOfCustomers = 1.
-			self assert: (customerBook includesCustomerNamed: johnLennon) ]"
-	self assert: [customerBook removeCustomerNamed: 'Paul McCartney'] shouldFailOn: NotFound knowingThat: [customerBook numberOfCustomers = 1].
-	self assert: [customerBook removeCustomerNamed: 'Paul McCartney'] shouldFailOn: NotFound knowingThat: [customerBook includesCustomerNamed: johnLennon].
-	
-	"Me gustaría pasarle una lista de aserciones pero así queda más declarativo."
-! !
+	self
+		assert: [customerBook removeCustomerNamed: 'Paul McCartney']
+		shouldFailOn: NotFound
+		knowingThat: [customerBook numberOfCustomers = 1]
+		and: [customerBook includesCustomerNamed: johnLennon].! !
 
 
-!IdiomTest methodsFor: 'extend' stamp: 'AM 4/22/2017 21:00:06'!
-assert: aBlockClosure shouldFailOn: anException knowingThat: thisIsTrue
-	"Asserts to True is thisIsTrue is realy True after anExeption is caught."
+!IdiomTest methodsFor: 'extend' stamp: 'AM 4/24/2017 22:20:47'!
+assert: aBlockClosure shouldFailOn: anException knowingThat: allOffThisIsTrue
+	"Asserts to True if allOffThisIsTrue is realy True, after anExeption is caught."
 
 	[aBlockClosure value.
 	self fail]
 	on: anException
-	do: [:anError | self assert: (thisIsTrue valueWithPossibleArgument: anError)]! !
+	do: [:anError | allOffThisIsTrue do: [:each| self assert: (each valueWithPossibleArgument: anError)]]! !
+
+!IdiomTest methodsFor: 'extend' stamp: 'AM 4/24/2017 22:34:27'!
+assert: aBlockClosure shouldFailOn: anException knowingThat: thisIsTrue and: thisIsTrueToo
+	"Asserts to True if thisIsTrue and thisIsTrueToo is realy True, after anExeption is caught."
+
+	self assert: aBlockClosure shouldFailOn: anException knowingThat: (Array with: thisIsTrue with: thisIsTrueToo).! !
 
 !IdiomTest methodsFor: 'extend' stamp: 'AM 4/22/2017 18:51:25'!
 assert: aClosure shouldNotTakeMoreThan: aMillisecondsLimit
