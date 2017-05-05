@@ -139,10 +139,26 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 !classDefinition: #OOStack category: #'Stack-Exercise'!
 Object subclass: #OOStack
-	instanceVariableNames: ''
+	instanceVariableNames: 'cantidad'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!OOStack methodsFor: 'testing' stamp: 'ABC 5/4/2017 20:13:44'!
+isEmpty
+	^(cantidad = 0)! !
+
+
+!OOStack methodsFor: 'initialization' stamp: 'ABC 5/4/2017 20:13:32'!
+initialize
+
+	super initialize.
+	cantidad := 0.! !
+
+
+!OOStack methodsFor: 'associating' stamp: 'ABC 5/4/2017 21:09:38'!
+push: aString 
+	cantidad := cantidad + 1.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
