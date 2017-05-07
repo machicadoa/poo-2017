@@ -139,26 +139,41 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 !classDefinition: #OOStack category: #'Stack-Exercise'!
 Object subclass: #OOStack
-	instanceVariableNames: 'cantidad'
+	instanceVariableNames: 'list'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'testing' stamp: 'ABC 5/4/2017 20:13:44'!
+!OOStack methodsFor: 'testing' stamp: 'AM 5/6/2017 23:37:07'!
 isEmpty
-	^(cantidad = 0)! !
+	^list isEmpty.! !
 
 
-!OOStack methodsFor: 'initialization' stamp: 'ABC 5/4/2017 20:13:32'!
+!OOStack methodsFor: 'initialization' stamp: 'AM 5/6/2017 23:29:58'!
 initialize
 
 	super initialize.
-	cantidad := 0.! !
+	list := OrderedCollection new.! !
 
 
-!OOStack methodsFor: 'associating' stamp: 'ABC 5/4/2017 21:09:38'!
-push: aString 
-	cantidad := cantidad + 1.! !
+!OOStack methodsFor: 'associating' stamp: 'AM 5/7/2017 00:20:16'!
+pop
+	[list removeFirst]
+	on: Error
+	do: [Error message: OOStack stackEmptyErrorDescription ].! !
+
+!OOStack methodsFor: 'associating' stamp: 'AM 5/6/2017 23:36:34'!
+push: anObject 
+	list addFirst: anObject.! !
+
+
+!OOStack methodsFor: 'accessing' stamp: 'AM 5/6/2017 23:46:06'!
+size
+	^list size.! !
+
+!OOStack methodsFor: 'accessing' stamp: 'AM 5/7/2017 00:07:00'!
+top
+	^list at: 1.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
