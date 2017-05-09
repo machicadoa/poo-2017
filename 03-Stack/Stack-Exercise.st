@@ -137,43 +137,104 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 ! !
 
 
-!classDefinition: #OOStack category: #'Stack-Exercise'!
-Object subclass: #OOStack
-	instanceVariableNames: 'list'
+!classDefinition: #OOElement category: #'Stack-Exercise'!
+Object subclass: #OOElement
+	instanceVariableNames: 'myElement second'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'testing' stamp: 'AM 5/6/2017 23:37:07'!
+!OOElement methodsFor: 'as yet unclassified' stamp: 'rod 5/7/2017 21:01:25'!
+initializeWithValue: elem1 Second: elem2
+	myElement _ elem1.
+	second _ elem2.! !
+
+!OOElement methodsFor: 'as yet unclassified' stamp: 'rod 5/7/2017 20:42:35'!
 isEmpty
-	^list isEmpty.! !
+	^ false.! !
+
+!OOElement methodsFor: 'as yet unclassified' stamp: 'rod 5/7/2017 20:43:11'!
+myElement
+	^ myElement.! !
+
+!OOElement methodsFor: 'as yet unclassified' stamp: 'rod 5/8/2017 19:32:06'!
+myElementSetter: anObject
+	 myElement _ anObject.! !
+
+!OOElement methodsFor: 'as yet unclassified' stamp: 'rod 5/7/2017 20:42:53'!
+second
+	^ second.! !
+
+!OOElement methodsFor: 'as yet unclassified' stamp: 'rod 5/8/2017 19:32:43'!
+secondSetter: anObject
+
+	 second _ anObject. ! !
+
+
+!classDefinition: #OOEmpty category: #'Stack-Exercise'!
+Object subclass: #OOEmpty
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOEmpty methodsFor: 'as yet unclassified' stamp: 'rod 5/7/2017 20:33:14'!
+isEmpty
+
+	^true! !
+
+!OOEmpty methodsFor: 'as yet unclassified' stamp: 'rod 5/7/2017 20:35:08'!
+myElement
+
+	^ self error: OOStack stackEmptyErrorDescription.! !
+
+!OOEmpty methodsFor: 'as yet unclassified' stamp: 'rod 5/7/2017 20:34:29'!
+second
+
+	^ self error: OOStack stackEmptyErrorDescription.! !
+
+
+!classDefinition: #OOStack category: #'Stack-Exercise'!
+Object subclass: #OOStack
+	instanceVariableNames: 'top size'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStack methodsFor: 'testing' stamp: 'rod 5/7/2017 20:48:18'!
+isEmpty
+	^top isEmpty.! !
 
 
-!OOStack methodsFor: 'initialization' stamp: 'AM 5/6/2017 23:29:58'!
-initialize
-
-	super initialize.
-	list := OrderedCollection new.! !
+!OOStack methodsFor: 'initialization' stamp: 'rod 5/8/2017 00:01:05'!
+initialize	size _ 0.
+	top _ OOEmpty new.! !
 
 
-!OOStack methodsFor: 'associating' stamp: 'AM 5/7/2017 00:20:16'!
-pop
-	[list removeFirst]
-	on: Error
-	do: [Error message: OOStack stackEmptyErrorDescription ].! !
+!OOStack methodsFor: 'associating' stamp: 'rod 5/8/2017 00:00:54'!
+pop	|var1|
+	var1 _ top.
+	size _ size - 1.
+	top _ top second.
+	^ var1 myElement.
+	! !
 
-!OOStack methodsFor: 'associating' stamp: 'AM 5/6/2017 23:36:34'!
-push: anObject 
-	list addFirst: anObject.! !
+!OOStack methodsFor: 'associating' stamp: 'rod 5/8/2017 19:30:10'!
+push: anObject 	|newSecond|	
+	newSecond _ top.
+	top _ OOElement new.
+	top myElementSetter: anObject.
+	top secondSetter: newSecond.
+	size _ size + 1.! !
 
 
-!OOStack methodsFor: 'accessing' stamp: 'AM 5/6/2017 23:46:06'!
+!OOStack methodsFor: 'accessing' stamp: 'rod 5/7/2017 20:59:19'!
 size
-	^list size.! !
+	^ size.! !
 
-!OOStack methodsFor: 'accessing' stamp: 'AM 5/7/2017 00:07:00'!
+!OOStack methodsFor: 'accessing' stamp: 'rod 5/8/2017 19:41:06'!
 top
-	^list at: 1.! !
+	^ top myElement.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
