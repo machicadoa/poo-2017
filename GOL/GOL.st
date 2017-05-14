@@ -55,31 +55,49 @@ test05DeadCellWithThreeAliveNeighResurects
 	
 	self deny: (gameOfLife isDeadAt: 1@1) ! !
 
-!GOLTest methodsFor: 'as yet unclassified' stamp: 'HAW 5/11/2017 20:59:58'!
+!GOLTest methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 18:09:08'!
 test06CreateCellOutsideBounds
 
 	self 
 		should: [ GameOfLife withLiveCells: { 2@0. 1@0. 1@4 } withSize: 3@3 ]
 		raise: Error - MessageNotUnderstood 
 		withExceptionDo: [ :anError |
-			self assert: anError messageText equals: 'celda fuera de rango' ]! !
+			self assert: anError messageText equals: GameOfLife CellOutOfBoundsErrorDescription ]! !
+
+!GOLTest methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 22:39:08'!
+test07InitialAliveCellXCoordenateIsInteger
+
+	self 
+		should: [ GameOfLife withLiveCells: { 2@0.5 } withSize: 3@3 ]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: anError messageText equals: GameOfLife CellIsNotIntegerErrorDescription]! !
+
+!GOLTest methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 22:43:56'!
+test08InitialAliveCellYCoordenateIsInteger
+
+	self 
+		should: [ GameOfLife withLiveCells: { 0.5@1 } withSize: 3@3 ]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: anError messageText equals: GameOfLife CellIsNotIntegerErrorDescription]! !
 
 
 !classDefinition: #GameOfLife category: #GOL!
 Object subclass: #GameOfLife
-	instanceVariableNames: 'aliveCells size'
+	instanceVariableNames: 'aliveCells board'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'GOL'!
 
-!GameOfLife methodsFor: 'as yet unclassified' stamp: 'HAW 5/12/2017 09:10:31'!
+!GameOfLife methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 20:19:56'!
 deadCells
 	
 	| deadCells |
 	
 	deadCells _ OrderedCollection new.
-	0 to: size x do: [ :x |
-		0 to: size y do: [ :y |
+	0 to: board corner x do: [ :x |
+		0 to: board corner y do: [ :y |
 			(aliveCells includes: x@y) not ifTrue: [ deadCells add: x@y]]].
 	^deadCells ! !
 
@@ -97,29 +115,28 @@ hasToSurvive: aCell
 	
 	^numberOfAliveNeighbours = 2 or:  [numberOfAliveNeighbours = 3]! !
 
-!GameOfLife methodsFor: 'as yet unclassified' stamp: 'HAW 5/9/2017 20:53:16'!
-initializeWith: aCollectionOfAliveCells 
+!GameOfLife methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 23:03:54'!
+initializeWith: aSetOfAliveCells withSize: aSize
 
-	aliveCells := aCollectionOfAliveCells ! !
-
-!GameOfLife methodsFor: 'as yet unclassified' stamp: 'HAW 5/11/2017 20:40:27'!
-initializeWith: aCollectionOfAliveCells withSize: aSize
-
-	size := aSize.
-	aliveCells := aCollectionOfAliveCells.
-	(aliveCells allSatisfy: [:aCell |
-		(aCell x between: 0 and: size x) and: [ aCell y between: 0 and: size y]]) ifFalse: [ self error: 'celda fuera de rango' ]! !
+	board := Rectangle origin:0@0 corner: aSize.
+	aliveCells := aSetOfAliveCells.
+	
+	(aliveCells allSatisfy: [:aCell | board containsPoint: aCell ]) ifFalse: [ self error: GameOfLife CellOutOfBoundsErrorDescription ].
+	(aliveCells allSatisfy: [:aCell | aCell x isInteger and: [aCell y isInteger ]]) ifFalse: [ self error: GameOfLife CellIsNotIntegerErrorDescription ]! !
 
 !GameOfLife methodsFor: 'as yet unclassified' stamp: 'HAW 5/10/2017 10:28:24'!
 isDeadAt: aCell
 
 	^(aliveCells includes: aCell) not! !
 
-!GameOfLife methodsFor: 'as yet unclassified' stamp: 'HAW 5/11/2017 21:05:39'!
+!GameOfLife methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 19:27:10'!
 nextGeneration
 	
-	aliveCells := (aliveCells select: [ :aCell | self hasToSurvive: aCell ]) union:
-		(self deadCells select: [ :aDeadCell | self hasToResurrect: aDeadCell ])! !
+	aliveCells := (aliveCells select: [ :anAliveCell | self hasToSurvive: anAliveCell ]) union:
+		(self deadCells select: [ :aDeadCell | self hasToResurrect: aDeadCell ])
+		
+		
+	"Me interesaría mejorar la forma en que se calculan  las caldas a resucitar pero no creo que sea el punto..."! !
 
 !GameOfLife methodsFor: 'as yet unclassified' stamp: 'HAW 5/10/2017 10:29:35'!
 numberOfAliveNeighboursOf: aCell
@@ -132,12 +149,17 @@ numberOfAliveNeighboursOf: aCell
 GameOfLife class
 	instanceVariableNames: ''!
 
-!GameOfLife class methodsFor: 'as yet unclassified' stamp: 'HAW 5/9/2017 20:52:29'!
-withLiveCells: aCollectionOfAliveCells
+!GameOfLife class methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 22:42:56'!
+CellIsNotIntegerErrorDescription
 
-	^self new initializeWith: aCollectionOfAliveCells ! !
+	^'las coordenadas de la celda deben ser numeros enteros'.! !
 
-!GameOfLife class methodsFor: 'as yet unclassified' stamp: 'HAW 5/11/2017 20:38:14'!
+!GameOfLife class methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 18:07:41'!
+CellOutOfBoundsErrorDescription
+
+	^'celda fuera de rango'.! !
+
+!GameOfLife class methodsFor: 'as yet unclassified' stamp: 'AM 5/13/2017 18:10:13'!
 withLiveCells: aCollectionOfAliveCells withSize: aPoint 
 	
-	^self new initializeWith: aCollectionOfAliveCells withSize: aPoint ! !
+	^self new initializeWith: aCollectionOfAliveCells asSet withSize: aPoint ! !
