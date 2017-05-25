@@ -1,52 +1,85 @@
 !classDefinition: #LongitudTest category: #Metro!
 TestCase subclass: #LongitudTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'unMetro dosMetros cienCentimetros milMilimetros unMedioMetro diezKilometros tresMetros'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Metro'!
 
-!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 19:36:00'!
-test01
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:14:32'!
+setUp
+	unMetro _ Longitud newMetros: 1.
+	dosMetros _ Longitud newMetros: 2.
+	tresMetros _ Longitud newMetros: 3.	
+	cienCentimetros _ Longitud newCentimetros: 100.
+	milMilimetros _ Longitud newMilimetros: 1000.
+	unMedioMetro _ Longitud newCentimetros: 50.
+	diezKilometros _ Longitud newKilometros: 10.! !
 
-	|unMetro|
-	
-	unMetro := Longitud newMetros: 1.
-	
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 19:22:30'!
+test01OneMeterIsEqualToOneMeter
+
 	self assert: unMetro = unMetro.! !
 
-!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 19:41:30'!
-test02
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 19:53:46'!
+test02TheSumBetweenMetersIsValid
 
-	|unMetro dosMetros|
-	
-	unMetro := Longitud newMetros: 1.
-	dosMetros := Longitud newMetros: 2.
-	
 	self assert: (unMetro + unMetro) = dosMetros.! !
 
-!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:15:49'!
-test03
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 19:56:04'!
+test03TheSubtractionBetweenMetersIsValid
 
-	|unMetro cienCentimetros|
-	
-	unMetro := Longitud newMetros: 1.
-	cienCentimetros := Longitud newCentimetros: 100.
-	
+	self assert: (dosMetros - unMetro) = unMetro.! !
+
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 19:58:44'!
+test04EqualityBetweenDiferentUnitsIsValid
 	self assert: cienCentimetros = unMetro.
 	self assert: unMetro = cienCentimetros.! !
 
-!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:38:43'!
-test04
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:05:11'!
+test05AdditionBetweenDiferentUnitsIsValid
+	self assert: cienCentimetros + milMilimetros = dosMetros.
+	self assert: milMilimetros + cienCentimetros = dosMetros.! !
 
-	|dosMetros cienCentimetros milMilimetros|
-	
-	dosMetros := Longitud newMetros: 2.
-	cienCentimetros := Longitud newCentimetros: 100.
-	milMilimetros := Longitud newMilimetros: 1000.
-	
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:01:00'!
+test06SubtractionBetweenDiferentUnitsIsValid
 	self assert: dosMetros - cienCentimetros = milMilimetros.
-	self assert: dosMetros - milMilimetros = cienCentimetros.
-	self assert: cienCentimetros + milMilimetros = dosMetros.! !
+	self assert: dosMetros - milMilimetros = cienCentimetros.! !
+
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:10:10'!
+test07OneMeterTimesTwoIsEqualToTwoMeters
+	self assert: unMetro * 2 equals: dosMetros.
+	self assert: 2 * unMetro equals: dosMetros.! !
+
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:00:35'!
+test08OneMeterDividedByScalarIsValid
+
+	self assert: unMetro / 2 equals: unMedioMetro.
+	self assert: milMilimetros / 0.5 = dosMetros.! !
+
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:18:27'!
+test09UnitTimesScalarIsValid
+
+	self assert: 0.5 * cienCentimetros = unMedioMetro.! !
+
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:21:40'!
+test10OperatorGreaterThanIsValid
+
+	self assert: diezKilometros > unMetro.! !
+
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:20:04'!
+test11OperatorGreaterOrEqualThanIsValid
+
+	self assert: diezKilometros >= unMetro.! !
+
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:21:32'!
+test12OperatorLesserThanIsValid
+
+	self assert:  unMetro < tresMetros.! !
+
+!LongitudTest methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:22:16'!
+test13OperatorLesserOrEqualThanIsValid
+
+	self assert:  unMetro <= tresMetros.! !
 
 
 !classDefinition: #Longitud category: #Metro!
@@ -56,6 +89,10 @@ Object subclass: #Longitud
 	poolDictionaries: ''
 	category: 'Metro'!
 
+!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 17:41:28'!
+* anInteger
+	^Longitud newMilimetros: self value * anInteger.! !
+
 !Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:36:28'!
 + aLongitud 
 	^Longitud newMilimetros: self value + aLongitud value.! !
@@ -64,17 +101,33 @@ Object subclass: #Longitud
 - aLongitud 
 	^Longitud newMilimetros: self value - aLongitud value.! !
 
+!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 19:07:19'!
+/ anInteger 
+	^self class newMilimetros: self value / anInteger.! !
+
+!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:15:16'!
+< aLongitud 
+	^self value < aLongitud value.! !
+
+!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:16:36'!
+<= aLongitud 
+	^self value <= aLongitud value! !
+
 !Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 19:58:45'!
 = aLongitud 
 	^self value = aLongitud value.! !
 
-!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:30:18'!
-initializeWithCentimetros: anInteger
-	milimetros := anInteger * 10.! !
+!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:09:49'!
+> aLongitud 
+	^self value > aLongitud value.! !
 
-!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:30:06'!
-initializeWithMetros: anInteger
-	milimetros := anInteger * 1000.! !
+!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:12:15'!
+>= aLongitud 
+	^self value >= aLongitud value.! !
+
+!Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:53:48'!
+adaptToNumber: aNumber andSend: selector 
+	^self perform: selector with: aNumber.! !
 
 !Longitud methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:20:19'!
 initializeWithMilimetros: anInteger
@@ -91,18 +144,18 @@ value
 Longitud class
 	instanceVariableNames: ''!
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 19:41:42'!
-+ aClass 
-	self shouldBeImplemented! !
-
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:10:32'!
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:40:57'!
 newCentimetros: anInteger 
-	^self new initializeWithCentimetros: anInteger.! !
+	^self new initializeWithMilimetros: anInteger * 10.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:34:20'!
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:07:34'!
+newKilometros: anInteger
+	^self new initializeWithMilimetros: anInteger * 1000000.! !
+
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:40:10'!
 newMetros: anInteger
-	^self new initializeWithMetros: anInteger.! !
+	^self new initializeWithMilimetros: anInteger * 1000.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/21/2017 20:20:36'!
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:39:17'!
 newMilimetros: anInteger
 	^self new initializeWithMilimetros: anInteger.! !
