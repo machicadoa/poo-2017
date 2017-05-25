@@ -82,6 +82,49 @@ test13OperatorLesserOrEqualThanIsValid
 	self assert:  unMetro <= tresMetros.! !
 
 
+!classDefinition: #DistanceFactory category: #Metro!
+Object subclass: #DistanceFactory
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Metro'!
+
+!DistanceFactory methodsFor: 'as yet unclassified' stamp: 'AM 5/25/2017 18:44:48'!
+minusOneMeter
+	
+	^Longitud newMetros: -1.! !
+
+!DistanceFactory methodsFor: 'as yet unclassified' stamp: 'AM 5/25/2017 18:45:46'!
+oneCentimeter
+	
+	^Longitud newCentimetros: 1.! !
+
+!DistanceFactory methodsFor: 'as yet unclassified' stamp: 'AM 5/25/2017 18:46:08'!
+oneHundredCentimeters
+	
+	^Longitud newCentimetros: 100.! !
+
+!DistanceFactory methodsFor: 'as yet unclassified' stamp: 'AM 5/25/2017 18:46:33'!
+oneMeter
+	
+	^Longitud newMetros: 1.! !
+
+!DistanceFactory methodsFor: 'as yet unclassified' stamp: 'AM 5/25/2017 18:47:39'!
+twoHundredCentimeters
+	
+	^Longitud newCentimetros: 200.! !
+
+!DistanceFactory methodsFor: 'as yet unclassified' stamp: 'AM 5/25/2017 18:48:13'!
+twoMeters
+	
+	^Longitud newMetros: 2.! !
+
+!DistanceFactory methodsFor: 'as yet unclassified' stamp: 'AM 5/25/2017 18:48:32'!
+zeroMeters
+	
+	^Longitud newMetros: 0.! !
+
+
 !classDefinition: #Longitud category: #Metro!
 Object subclass: #Longitud
 	instanceVariableNames: 'milimetros'
