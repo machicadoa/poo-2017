@@ -109,6 +109,14 @@ test16IterationBetweenBoundsWorksAsExpected
 		valueList removeFirst.
 	]! !
 
+!LongitudTest methodsFor: 'tests' stamp: 'AM 5/30/2017 10:32:44'!
+test17CanCreateNewUnitsCorrectly
+	|unMetroDeclaradoDeOtraForma|
+	
+	unMetroDeclaradoDeOtraForma  := Longitud newUnitName: 'metro' scaleWithMeter: 1 amount: 1.
+	
+	self assert: unMetro = unMetroDeclaradoDeOtraForma.! !
+
 
 !LongitudTest methodsFor: 'setup' stamp: 'AM 5/23/2017 21:14:32'!
 setUp
@@ -166,7 +174,7 @@ zeroMeters
 
 !classDefinition: #Longitud category: #Metro!
 Object subclass: #Longitud
-	instanceVariableNames: 'milimetros'
+	instanceVariableNames: 'milimetros unitName'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Metro'!
@@ -209,9 +217,10 @@ Object subclass: #Longitud
 	^self value >= aLongitud value.! !
 
 
-!Longitud methodsFor: 'initialization' stamp: 'AM 5/21/2017 20:20:19'!
-initializeWithMilimetros: anInteger
-	milimetros := anInteger.! !
+!Longitud methodsFor: 'initialization' stamp: 'AM 5/30/2017 10:15:39'!
+initializeWithName: aUnitName scaleWithMeter: aScale amount: aNumber
+	milimetros := aNumber * aScale * 1000.
+	unitName := aUnitName.! !
 
 
 !Longitud methodsFor: 'private' stamp: 'AM 5/23/2017 20:53:48'!
@@ -261,18 +270,22 @@ to: aLongitud by: step do: aBlockClosure
 Longitud class
 	instanceVariableNames: ''!
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:40:57'!
-newCentimetros: anInteger 
-	^self new initializeWithMilimetros: anInteger * 10.! !
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:26:00'!
+newCentimetros: anNumber
+	^self newUnitName: 'centimetro' scaleWithMeter: 1/100 amount: anNumber.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 21:07:34'!
-newKilometros: anInteger
-	^self new initializeWithMilimetros: anInteger * 1000000.! !
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:27:17'!
+newKilometros: anNumber
+	^self newUnitName: 'kilometro' scaleWithMeter: 1000 amount: anNumber.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:40:10'!
-newMetros: anInteger
-	^self new initializeWithMilimetros: anInteger * 1000.! !
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:27:53'!
+newMetros: anNumber
+	^self newUnitName: 'metro' scaleWithMeter: 1 amount: anNumber.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/23/2017 20:39:17'!
-newMilimetros: anInteger
-	^self new initializeWithMilimetros: anInteger.! !
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:29:19'!
+newMilimetros: anNumber
+	^self newUnitName: 'milimetro' scaleWithMeter: 1/1000 amount: anNumber.! !
+
+!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:10:35'!
+newUnitName: aUnitName scaleWithMeter: aScale amount: aNumber 
+	^self new initializeWithName: aUnitName scaleWithMeter: aScale amount: aNumber.! !
