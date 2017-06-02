@@ -1,246 +1,220 @@
-!classDefinition: #LongitudTest category: #'Distance-Solution'!
-TestCase subclass: #LongitudTest
-	instanceVariableNames: 'unMetro dosMetros cienCentimetros milMilimetros unMedioMetro diezKilometros tresMetros'
+!classDefinition: #DistanceTest category: #'Distance-Solution'!
+TestCase subclass: #DistanceTest
+	instanceVariableNames: 'oneMeter twoMeters threeMeters oneHundredCentimeters oneThousandMillimeters oneHalfMeter tenKilometers'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Distance-Solution'!
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 19:22:30'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:34:42'!
 test01OneMeterIsEqualToOneMeter
 
-	self assert: unMetro = unMetro.! !
+	self assert: oneMeter = oneMeter.! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 19:53:46'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:34:48'!
 test02TheSumBetweenMetersIsValid
 
-	self assert: (unMetro + unMetro) = dosMetros.! !
+	self assert: (oneMeter + oneMeter) = twoMeters.! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 19:56:04'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:34:54'!
 test03TheSubtractionBetweenMetersIsValid
 
-	self assert: (dosMetros - unMetro) = unMetro.! !
+	self assert: (twoMeters - oneMeter) = oneMeter.! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 19:58:44'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:34:59'!
 test04EqualityBetweenDiferentUnitsIsValid
-	self assert: cienCentimetros = unMetro.
-	self assert: unMetro = cienCentimetros.! !
+	self assert: oneHundredCentimeters = oneMeter.
+	self assert: oneMeter = oneHundredCentimeters.! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 20:05:11'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:35:04'!
 test05AdditionBetweenDiferentUnitsIsValid
-	self assert: cienCentimetros + milMilimetros = dosMetros.
-	self assert: milMilimetros + cienCentimetros = dosMetros.! !
+	self assert: oneHundredCentimeters + oneThousandMillimeters = twoMeters.
+	self assert: oneThousandMillimeters + oneHundredCentimeters = twoMeters.! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 20:01:00'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:35:11'!
 test06SubtractionBetweenDiferentUnitsIsValid
-	self assert: dosMetros - cienCentimetros = milMilimetros.
-	self assert: dosMetros - milMilimetros = cienCentimetros.! !
+	self assert: twoMeters - oneHundredCentimeters = oneThousandMillimeters.
+	self assert: twoMeters - oneThousandMillimeters = oneHundredCentimeters.! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 20:10:10'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:35:20'!
 test07OneMeterTimesTwoIsEqualToTwoMeters
-	self assert: unMetro * 2 equals: dosMetros.
-	self assert: 2 * unMetro equals: dosMetros.! !
+	self assert: oneMeter * 2 equals: twoMeters.
+	self assert: 2 * oneMeter equals: twoMeters.! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 21:00:35'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:39:50'!
 test08OneMeterDividedByScalarIsValid
 
-	self assert: unMetro / 2 equals: unMedioMetro.
-	self assert: milMilimetros / 0.5 = dosMetros.! !
+	self assert: oneMeter / 2 equals: oneHalfMeter.
+	self assert: oneThousandMillimeters / (1/2) = twoMeters.! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 21:18:27'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:35:32'!
 test09UnitTimesScalarIsValid
 
-	self assert: 0.5 * cienCentimetros = unMedioMetro.! !
+	self assert: 0.5 * oneHundredCentimeters = oneHalfMeter .! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 21:21:40'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:35:39'!
 test10OperatorGreaterThanIsValid
 
-	self assert: diezKilometros > unMetro.! !
+	self assert: tenKilometers > oneMeter .! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 21:20:04'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:35:47'!
 test11OperatorGreaterOrEqualThanIsValid
 
-	self assert: diezKilometros >= unMetro.! !
+	self assert: tenKilometers >= oneMeter .! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 21:21:32'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:35:56'!
 test12OperatorLesserThanIsValid
 
-	self assert:  unMetro < tresMetros.! !
+	self assert:  oneMeter < threeMeters .! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/23/2017 21:22:16'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:36:05'!
 test13OperatorLesserOrEqualThanIsValid
 
-	self assert:  unMetro <= tresMetros.! !
+	self assert:  oneMeter <= threeMeters .! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/28/2017 23:39:05'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:36:10'!
 test14IntervalIsConformedOnlyByExpectedPointsBetweenBothEnds
 
 	|interval|
-	interval := unMetro to: tresMetros.
+	interval := oneMeter to: threeMeters .
 	
 	self assert: interval size = 3.
-	self assert: (interval at: 1) = unMetro.
-	self assert: (interval at: 2) = dosMetros.
-	self assert: (interval at: 3) = tresMetros.! !
+	self assert: (interval at: 1) = oneMeter.
+	self assert: (interval at: 2) = twoMeters .
+	self assert: (interval at: 3) = threeMeters .! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/28/2017 23:57:43'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:36:15'!
 test15IntervalIsConformedOnlyByPointsWithinBoundsSeparatedBySpecifiedDistance
 
 	|interval|
-	interval := unMetro to: tresMetros by: unMetro.
+	interval := oneMeter to: threeMeters by: oneMeter .
 	
 	self assert: interval size = 3.
-	self assert: (interval at: 1) = unMetro.
-	self assert: (interval at: 2) = dosMetros.
-	self assert: (interval at: 3) = tresMetros.! !
+	self assert: (interval at: 1) = oneMeter .
+	self assert: (interval at: 2) = twoMeters .
+	self assert: (interval at: 3) = threeMeters .! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/29/2017 00:04:30'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:36:22'!
 test16IterationBetweenBoundsWorksAsExpected
 
 	|valueList|
 	
 	valueList  := OrderedCollection new.
-	valueList add: unMetro.
-	valueList add: dosMetros.
-	valueList add: tresMetros.
+	valueList add: oneMeter .
+	valueList add: twoMeters .
+	valueList add: threeMeters .
 
-	unMetro to: tresMetros by: unMetro do:
+	oneMeter to: threeMeters by: oneMeter do:
 	[:each|
 		self assert: each = (valueList at: 1).
 		valueList removeFirst.
 	]! !
 
-!LongitudTest methodsFor: 'tests' stamp: 'AM 5/30/2017 10:32:44'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:40:30'!
 test17CanCreateNewUnitsCorrectly
-	|unMetroDeclaradoDeOtraForma|
+	|anotherMeter|
 	
-	unMetroDeclaradoDeOtraForma  := Longitud newUnitName: 'metro' scaleWithMeter: 1 amount: 1.
+	anotherMeter  := Distance newUnitName: 'metro' scaleWithMeter: 1 amount: 1.
 	
-	self assert: unMetro = unMetroDeclaradoDeOtraForma.! !
+	self assert: oneMeter = anotherMeter.! !
 
 
-!LongitudTest methodsFor: 'setup' stamp: 'AM 5/23/2017 21:14:32'!
+!DistanceTest methodsFor: 'setup' stamp: 'AM 6/2/2017 20:33:56'!
 setUp
-	unMetro _ Longitud newMetros: 1.
-	dosMetros _ Longitud newMetros: 2.
-	tresMetros _ Longitud newMetros: 3.	
-	cienCentimetros _ Longitud newCentimetros: 100.
-	milMilimetros _ Longitud newMilimetros: 1000.
-	unMedioMetro _ Longitud newCentimetros: 50.
-	diezKilometros _ Longitud newKilometros: 10.! !
+	oneMeter _ Distance newMetros: 1.
+	twoMeters _ Distance newMetros: 2.
+	threeMeters _ Distance newMetros: 3.	
+	oneHundredCentimeters _ Distance newCentimetros: 100.
+	oneThousandMillimeters _ Distance newMilimetros: 1000.
+	oneHalfMeter _ Distance newCentimetros: 50.
+	tenKilometers _ Distance newKilometros: 10.! !
+
 
 
-!classDefinition: #DistanceFactory category: #'Distance-Solution'!
-Object subclass: #DistanceFactory
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Distance-Solution'!
-
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 5/25/2017 18:44:48'!
-minusOneMeter
-	
-	^Longitud newMetros: -1.! !
-
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 5/25/2017 18:45:46'!
-oneCentimeter
-	
-	^Longitud newCentimetros: 1.! !
-
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 5/25/2017 18:46:08'!
-oneHundredCentimeters
-	
-	^Longitud newCentimetros: 100.! !
-
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 5/25/2017 18:46:33'!
-oneMeter
-	
-	^Longitud newMetros: 1.! !
-
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 5/25/2017 18:47:39'!
-twoHundredCentimeters
-	
-	^Longitud newCentimetros: 200.! !
-
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 5/25/2017 18:48:13'!
-twoMeters
-	
-	^Longitud newMetros: 2.! !
-
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 5/25/2017 18:48:32'!
-zeroMeters
-	
-	^Longitud newMetros: 0.! !
-
-
-!classDefinition: #Longitud category: #'Distance-Solution'!
-Object subclass: #Longitud
+!classDefinition: #Distance category: #'Distance-Solution'!
+Object subclass: #Distance
 	instanceVariableNames: 'milimetros unitName'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Distance-Solution'!
 
-!Longitud methodsFor: 'arithmetic operations' stamp: 'AM 5/23/2017 17:41:28'!
+!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/2/2017 20:29:15'!
 * anInteger
-	^Longitud newMilimetros: self value * anInteger.! !
+	^Distance newMilimetros: self value * anInteger.! !
 
-!Longitud methodsFor: 'arithmetic operations' stamp: 'AM 5/21/2017 20:36:28'!
-+ aLongitud 
-	^Longitud newMilimetros: self value + aLongitud value.! !
+!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/2/2017 20:28:55'!
++ aDistance
+	^Distance newMilimetros: self value + aDistance value.! !
 
-!Longitud methodsFor: 'arithmetic operations' stamp: 'AM 5/21/2017 20:23:15'!
-- aLongitud 
-	^Longitud newMilimetros: self value - aLongitud value.! !
+!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/2/2017 20:29:29'!
+- aDistance 
+	^Distance newMilimetros: self value - aDistance value.! !
 
-!Longitud methodsFor: 'arithmetic operations' stamp: 'AM 5/23/2017 19:07:19'!
+!Distance methodsFor: 'arithmetic operations' stamp: 'AM 5/23/2017 19:07:19'!
 / anInteger 
 	^self class newMilimetros: self value / anInteger.! !
 
 
-!Longitud methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:15:16'!
+!Distance methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:15:16'!
 < aLongitud 
 	^self value < aLongitud value.! !
 
-!Longitud methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:16:36'!
+!Distance methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:16:36'!
 <= aLongitud 
 	^self value <= aLongitud value! !
 
-!Longitud methodsFor: 'comparing' stamp: 'AM 5/21/2017 19:58:45'!
+!Distance methodsFor: 'comparing' stamp: 'AM 5/21/2017 19:58:45'!
 = aLongitud 
 	^self value = aLongitud value.! !
 
-!Longitud methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:09:49'!
+!Distance methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:09:49'!
 > aLongitud 
 	^self value > aLongitud value.! !
 
-!Longitud methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:12:15'!
+!Distance methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:12:15'!
 >= aLongitud 
 	^self value >= aLongitud value.! !
 
 
-!Longitud methodsFor: 'initialization' stamp: 'AM 5/30/2017 10:15:39'!
+!Distance methodsFor: 'initialization' stamp: 'AM 5/30/2017 10:15:39'!
 initializeWithName: aUnitName scaleWithMeter: aScale amount: aNumber
 	milimetros := aNumber * aScale * 1000.
 	unitName := aUnitName.! !
 
 
-!Longitud methodsFor: 'private' stamp: 'AM 5/23/2017 20:53:48'!
+!Distance methodsFor: 'private' stamp: 'AM 5/23/2017 20:53:48'!
 adaptToNumber: aNumber andSend: selector 
 	^self perform: selector with: aNumber.! !
 
-!Longitud methodsFor: 'private' stamp: 'AM 5/21/2017 20:29:57'!
+!Distance methodsFor: 'private' stamp: 'RC 6/1/2017 20:56:54'!
+amount
+	
+	^self value.! !
+
+!Distance methodsFor: 'private' stamp: 'AM 5/21/2017 20:29:57'!
 value
 	
 	^milimetros.! !
 
 
-!Longitud methodsFor: 'intervals' stamp: 'AM 5/28/2017 19:21:42'!
+!Distance methodsFor: 'intervals' stamp: 'AM 6/2/2017 20:28:40'!
+negated
+	^Distance newUnitName: self unit scaleWithMeter: 1 / 1000 amount: 0 - self value.
+	
+	! !
+
+!Distance methodsFor: 'intervals' stamp: 'RC 6/1/2017 21:27:00'!
+printString
+
+	^self unit.! !
+
+!Distance methodsFor: 'intervals' stamp: 'AM 5/28/2017 19:21:42'!
 to: aLongitud 
 	|step|
 	
 	step := self class newMetros: 1.
 	^self to: aLongitud by: step.! !
 
-!Longitud methodsFor: 'intervals' stamp: 'AM 5/28/2017 19:20:52'!
+!Distance methodsFor: 'intervals' stamp: 'AM 5/28/2017 19:20:52'!
 to: aLongitud by: step 
 
 	|interval nextValue|
@@ -253,7 +227,7 @@ to: aLongitud by: step
 			nextValue := nextValue + step].
 	^interval.! !
 
-!Longitud methodsFor: 'intervals' stamp: 'AM 5/28/2017 23:28:31'!
+!Distance methodsFor: 'intervals' stamp: 'AM 5/28/2017 23:28:31'!
 to: aLongitud by: step do: aBlockClosure 
 
 	|nextValue|
@@ -264,28 +238,87 @@ to: aLongitud by: step do: aBlockClosure
 			[aBlockClosure value: nextValue.
 			nextValue := nextValue + step].! !
 
+!Distance methodsFor: 'intervals' stamp: 'RC 6/1/2017 20:57:39'!
+unit
+	^unitName.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Longitud class' category: #'Distance-Solution'!
-Longitud class
+!classDefinition: 'Distance class' category: #'Distance-Solution'!
+Distance class
 	instanceVariableNames: ''!
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:26:00'!
+!Distance class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:26:00'!
 newCentimetros: anNumber
 	^self newUnitName: 'centimetro' scaleWithMeter: 1/100 amount: anNumber.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:27:17'!
+!Distance class methodsFor: 'as yet unclassified' stamp: 'RC 6/1/2017 21:29:08'!
+newDecametro: anNumber
+	^self newUnitName: 'decameter' scaleWithMeter: 10 amount: anNumber.! !
+
+!Distance class methodsFor: 'as yet unclassified' stamp: 'RC 6/1/2017 21:29:14'!
+newDecimetros: anNumber
+	^self newUnitName: 'decimeter' scaleWithMeter: 1/10 amount: anNumber.! !
+
+!Distance class methodsFor: 'as yet unclassified' stamp: 'RC 6/1/2017 21:21:07'!
+newHectometro: anNumber
+	^self newUnitName: 'hectometro' scaleWithMeter: 100 amount: anNumber.! !
+
+!Distance class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:27:17'!
 newKilometros: anNumber
 	^self newUnitName: 'kilometro' scaleWithMeter: 1000 amount: anNumber.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:27:53'!
+!Distance class methodsFor: 'as yet unclassified' stamp: 'RC 6/1/2017 21:28:40'!
 newMetros: anNumber
-	^self newUnitName: 'metro' scaleWithMeter: 1 amount: anNumber.! !
+	^self newUnitName: 'meter' scaleWithMeter: 1 amount: anNumber.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:29:19'!
+!Distance class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:29:19'!
 newMilimetros: anNumber
 	^self newUnitName: 'milimetro' scaleWithMeter: 1/1000 amount: anNumber.! !
 
-!Longitud class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:10:35'!
+!Distance class methodsFor: 'as yet unclassified' stamp: 'AM 5/30/2017 10:10:35'!
 newUnitName: aUnitName scaleWithMeter: aScale amount: aNumber 
 	^self new initializeWithName: aUnitName scaleWithMeter: aScale amount: aNumber.! !
+
+
+!classDefinition: #DistanceFactory category: #'Distance-Solution'!
+Object subclass: #DistanceFactory
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Distance-Solution'!
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:14'!
+minusOneMeter
+	
+	^Distance newMetros: -1.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:23'!
+oneCentimeter
+	
+	^Distance newCentimetros: 1.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:04'!
+oneHundredCentimeters
+	
+	^Distance newCentimetros: 100.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:30'!
+oneMeter
+	
+	^Distance newMetros: 1.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:27:59'!
+twoHundredCentimeters
+	
+	^Distance newCentimetros: 200.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:33'!
+twoMeters
+	
+	^Distance newMetros: 2.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:27:55'!
+zeroMeters
+	
+	^Distance newMetros: 0.! !
