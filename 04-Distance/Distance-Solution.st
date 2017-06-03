@@ -322,3 +322,31 @@ twoMeters
 zeroMeters
 	
 	^Distance newMetros: 0.! !
+
+
+!classDefinition: #Unit category: #'Distance-Solution'!
+Object subclass: #Unit
+	instanceVariableNames: 'unitName scale'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Distance-Solution'!
+
+!Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/2/2017 20:52:08'!
+initializeWithName: aName andScale: aScale 
+	unitName _ aName.
+	scale _ aScale.! !
+
+!Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/2/2017 20:55:59'!
+printString
+
+	^unitName.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Unit class' category: #'Distance-Solution'!
+Unit class
+	instanceVariableNames: ''!
+
+!Unit class methodsFor: 'as yet unclassified' stamp: 'AM 6/2/2017 20:51:48'!
+newName: aUnitName scaleWithMeter: aScale 
+	^self new initializeWithName: aUnitName andScale: aScale.! !
