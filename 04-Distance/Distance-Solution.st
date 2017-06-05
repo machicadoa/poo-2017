@@ -1,6 +1,6 @@
 !classDefinition: #DistanceTest category: #'Distance-Solution'!
 TestCase subclass: #DistanceTest
-	instanceVariableNames: 'oneMeter twoMeters threeMeters oneHundredCentimeters oneThousandMillimeters oneHalfMeter tenKilometers'
+	instanceVariableNames: 'oneMeter twoMeters threeMeters oneHundredCentimeters oneThousandMillimeters oneHalfMeter tenKilometers factory'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Distance-Solution'!
@@ -109,49 +109,50 @@ test16IterationBetweenBoundsWorksAsExpected
 		valueList removeFirst.
 	]! !
 
-!DistanceTest methodsFor: 'tests' stamp: 'AM 6/2/2017 20:40:30'!
+!DistanceTest methodsFor: 'tests' stamp: 'AM 6/4/2017 23:20:05'!
 test17CanCreateNewUnitsCorrectly
 	|anotherMeter|
 	
-	anotherMeter  := Distance newUnitName: 'metro' scaleWithMeter: 1 amount: 1.
+	anotherMeter  := Unit newName: 'metro' scaleWithMeter: 1.
 	
-	self assert: oneMeter = anotherMeter.! !
+	self assert: meter = anotherMeter.! !
 
 
-!DistanceTest methodsFor: 'setup' stamp: 'AM 6/2/2017 20:33:56'!
+!DistanceTest methodsFor: 'setup' stamp: 'AM 6/4/2017 17:31:25'!
 setUp
-	oneMeter _ Distance newMetros: 1.
-	twoMeters _ Distance newMetros: 2.
-	threeMeters _ Distance newMetros: 3.	
-	oneHundredCentimeters _ Distance newCentimetros: 100.
-	oneThousandMillimeters _ Distance newMilimetros: 1000.
-	oneHalfMeter _ Distance newCentimetros: 50.
-	tenKilometers _ Distance newKilometros: 10.! !
+	factory := DistanceFactory new.
 
+	oneMeter _ factory oneMeter.
+	twoMeters _ factory twoMeters.
+	threeMeters _ factory threeMeters.
+	oneHundredCentimeters _ factory oneHundredCentimeters.
+	oneThousandMillimeters _ factory oneThousandMillimeters.
+	oneHalfMeter _ factory oneMeter * (1/2).
+	tenKilometers _ factory oneKilometer * 10.! !
 
 
 !classDefinition: #Distance category: #'Distance-Solution'!
 Object subclass: #Distance
-	instanceVariableNames: 'milimetros unitName'
+	instanceVariableNames: 'milimetros unitName unit amount'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Distance-Solution'!
 
-!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/2/2017 20:29:15'!
+!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/4/2017 18:56:38'!
 * anInteger
-	^Distance newMilimetros: self value * anInteger.! !
+	^self class newWithUnit: unit andAmount: amount * anInteger.! !
 
-!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/2/2017 20:28:55'!
+!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/4/2017 19:00:53'!
 + aDistance
-	^Distance newMilimetros: self value + aDistance value.! !
+	^self class newWithUnit: meter andAmount: self value + aDistance value.! !
 
-!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/2/2017 20:29:29'!
+!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/4/2017 19:07:05'!
 - aDistance 
-	^Distance newMilimetros: self value - aDistance value.! !
+	^self class newWithUnit: meter andAmount: self value - aDistance value.! !
 
-!Distance methodsFor: 'arithmetic operations' stamp: 'AM 5/23/2017 19:07:19'!
+!Distance methodsFor: 'arithmetic operations' stamp: 'AM 6/4/2017 23:05:31'!
 / anInteger 
-	^self class newMilimetros: self value / anInteger.! !
+	^self class newWithUnit: unit andAmount: amount / anInteger.! !
 
 
 !Distance methodsFor: 'comparing' stamp: 'AM 5/23/2017 21:15:16'!
@@ -190,11 +191,6 @@ amount
 	
 	^self value.! !
 
-!Distance methodsFor: 'private' stamp: 'AM 5/21/2017 20:29:57'!
-value
-	
-	^milimetros.! !
-
 
 !Distance methodsFor: 'intervals' stamp: 'AM 6/2/2017 20:28:40'!
 negated
@@ -207,11 +203,10 @@ printString
 
 	^self unit.! !
 
-!Distance methodsFor: 'intervals' stamp: 'AM 5/28/2017 19:21:42'!
+!Distance methodsFor: 'intervals' stamp: 'AM 6/4/2017 23:16:16'!
 to: aLongitud 
 	|step|
-	
-	step := self class newMetros: 1.
+	step := self class newWithUnit: meter andAmount: 1.
 	^self to: aLongitud by: step.! !
 
 !Distance methodsFor: 'intervals' stamp: 'AM 5/28/2017 19:20:52'!
@@ -241,6 +236,16 @@ to: aLongitud by: step do: aBlockClosure
 !Distance methodsFor: 'intervals' stamp: 'RC 6/1/2017 20:57:39'!
 unit
 	^unitName.! !
+
+!Distance methodsFor: 'intervals' stamp: 'AM 6/4/2017 19:05:16'!
+value
+	^unit scale * amount.! !
+
+
+!Distance methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 17:30:17'!
+initializeWithUnit: aUnit andAmount: aNumber
+	unit := aUnit.
+	amount := aNumber.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -280,6 +285,10 @@ newMilimetros: anNumber
 newUnitName: aUnitName scaleWithMeter: aScale amount: aNumber 
 	^self new initializeWithName: aUnitName scaleWithMeter: aScale amount: aNumber.! !
 
+!Distance class methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 17:29:30'!
+newWithUnit: aUnit andAmount: aNumber
+	^self new initializeWithUnit: aUnit andAmount:aNumber.! !
+
 
 !classDefinition: #DistanceFactory category: #'Distance-Solution'!
 Object subclass: #DistanceFactory
@@ -288,40 +297,54 @@ Object subclass: #DistanceFactory
 	poolDictionaries: ''
 	category: 'Distance-Solution'!
 
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:14'!
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:05:32'!
 minusOneMeter
 	
-	^Distance newMetros: -1.! !
+	^-1 * meter.! !
 
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:23'!
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:17:07'!
 oneCentimeter
 	
-	^Distance newCentimetros: 1.! !
+	^1 * centimeter.! !
 
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:04'!
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:17:18'!
 oneHundredCentimeters
 	
-	^Distance newCentimetros: 100.! !
+	^100 * centimeter.! !
 
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:30'!
-oneMeter
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:16:12'!
+oneKilometer
 	
-	^Distance newMetros: 1.! !
+	^1 * kilometer.! !
 
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:27:59'!
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:21:39'!
+oneMeter
+	^1 * meter.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:14:01'!
+oneThousandMillimeters
+	
+	^1000 * millimeter.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:09:36'!
+threeMeters
+	
+	^3 * meter.! !
+
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:18:03'!
 twoHundredCentimeters
 	
-	^Distance newCentimetros: 200.! !
+	^200 * centimeter.! !
 
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:28:33'!
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:20:29'!
 twoMeters
 	
-	^Distance newMetros: 2.! !
+	^2 * meter.! !
 
-!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/2/2017 20:27:55'!
+!DistanceFactory methodsFor: 'constant' stamp: 'AM 6/4/2017 17:20:39'!
 zeroMeters
 	
-	^Distance newMetros: 0.! !
+	^0 * meter.! !
 
 
 !classDefinition: #Unit category: #'Distance-Solution'!
@@ -330,6 +353,25 @@ Object subclass: #Unit
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Distance-Solution'!
+
+!Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 17:28:03'!
+* aNumber 
+	
+	^Distance newWithUnit: self andAmount: aNumber.! !
+
+!Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 23:25:40'!
+= anotherUnit
+
+	^self hash = anotherUnit hash! !
+
+!Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 17:25:49'!
+adaptToNumber: aNumber andSend: selector 
+	^self perform: selector with: aNumber.! !
+
+!Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 23:24:25'!
+hash
+
+	^scale.! !
 
 !Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/2/2017 20:52:08'!
 initializeWithName: aName andScale: aScale 
@@ -341,12 +383,23 @@ printString
 
 	^unitName.! !
 
+!Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 19:05:42'!
+scale
+
+	^scale.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Unit class' category: #'Distance-Solution'!
 Unit class
 	instanceVariableNames: ''!
 
-!Unit class methodsFor: 'as yet unclassified' stamp: 'AM 6/2/2017 20:51:48'!
+!Unit class methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 23:31:38'!
 newName: aUnitName scaleWithMeter: aScale 
-	^self new initializeWithName: aUnitName andScale: aScale.! !
+	|newUnit|
+	
+	newUnit := self new initializeWithName: aUnitName andScale: aScale.
+	
+	Smalltalk at: aUnitName asSymbol ifAbsentPut: [newUnit].
+	
+	^newUnit.! !
