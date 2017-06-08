@@ -1,0 +1,17 @@
+Unit isAMeasureOf: 'Distance' withUnitName: 'meter' andScale: 1 andBaseUnit: 'meter'.
+Unit isAMeasureOf: 'Distance' withUnitName: 'centimeter' andScale: 100 andBaseUnit: 'meter'.
+Unit isAMeasureOf: 'Distance' withUnitName: 'decameter' andScale: 10 andBaseUnit: 'meter'.
+Unit isAMeasureOf: 'Distance' withUnitName: 'decimeter' andScale: 1/10 andBaseUnit: 'meter'.
+Unit isAMeasureOf: 'Distance' withUnitName: 'kilometer' andScale: 1/1000 andBaseUnit: 'meter'.
+Unit isAMeasureOf: 'Distance' withUnitName: 'hectometer' andScale: 100 andBaseUnit: 'meter'.
+Unit isAMeasureOf: 'Distance' withUnitName: 'millimeter' andScale: 1000 andBaseUnit: 'meter'.
+
+Unit isAMeasureOf: 'Temperature' withUnitName: 'celsius' andScale: 1 andBaseUnit: 'celsius'.
+Unit isAMeasureOf: 'Temperature' withUnitName: 'fahrenheit' andScale: 33.8 andBaseUnit: 'celsius'.
+Unit isAMeasureOf: 'Temperature' withUnitName: 'kelvin' andScale: 274.15 andBaseUnit: 'celsius'.
+
+Unit isAMeasureOf: 'Time' withUnitName: 'minute'  andScale: 1 andBaseUnit: 'minute'.
+Unit isAMeasureOf: 'Time' withUnitName: 'hour'  andScale: 60 andBaseUnit: 'minute'.
+Unit isAMeasureOf: 'Time' withUnitName: 'second'  andScale: 1/60 andBaseUnit: 'minute'.
+Unit isAMeasureOf: 'Time' withUnitName: 'day'  andScale: 1440 andBaseUnit: 'minute'.
+
