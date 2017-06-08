@@ -122,7 +122,6 @@ setUp
 	oneHalfMeter _ factory oneMeter * (1/2).
 	tenKilometers _ factory oneKilometer * 10.! !
 
-
 
 !classDefinition: #MeasureTest category: #'Measure-Solution'!
 TestCase subclass: #MeasureTest
@@ -131,13 +130,13 @@ TestCase subclass: #MeasureTest
 	poolDictionaries: ''
 	category: 'Measure-Solution'!
 
-!MeasureTest methodsFor: 'as yet unclassified' stamp: 'AM 6/6/2017 20:50:10'!
+!MeasureTest methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 16:46:02'!
 test01
 
 |oneKilogram gram|
 
-	gram := Unit newName: 'gram'  scaleWithBaseUnit: 1.
-	oneKilogram := Weight newUnit: gram andAmount: 1000.
+	gram := Unit isAMeasureOf: Weight withUnitName: 'gram'  andScaleWithBase: 1.
+	oneKilogram := Weight newWithUnit: gram andAmount: 1000.
 
 	self assert: oneKilogram = oneKilogram.! !
 
@@ -145,6 +144,11 @@ test01
 test02
 
 	self assert: (1 * gram) class = Weight.! !
+
+!MeasureTest methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 17:35:53'!
+test03
+
+	self assert: ((10 * gram) + (50 * meter)) = ((10 * gram) + (50 * meter)).! !
 
 
 !classDefinition: #DistanceFactory category: #'Measure-Solution'!
@@ -211,6 +215,54 @@ Object subclass: #Measure
 	poolDictionaries: ''
 	category: 'Measure-Solution'!
 
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Measure class' category: #'Measure-Solution'!
+Measure class
+	instanceVariableNames: ''!
+
+!Measure class methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 16:43:13'!
+newWithUnit: anUnit andAmount: aNumber 
+	^self new initializeWithUnit: anUnit andAmount:aNumber.! !
+
+
+!classDefinition: #CompositeMeasure category: #'Measure-Solution'!
+Measure subclass: #CompositeMeasure
+	instanceVariableNames: 'measures'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Measure-Solution'!
+
+!CompositeMeasure methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 18:53:20'!
+contains: aMeasure 
+	^measures includes: aMeasure! !
+
+!CompositeMeasure methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 18:01:09'!
+initializeWith: anArray 
+	measures := anArray.! !
+
+!CompositeMeasure methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 18:55:35'!
+measureCount
+	^measures size.! !
+
+
+!CompositeMeasure methodsFor: 'nil' stamp: 'AM 6/8/2017 18:25:46'!
+= aMeasure
+
+	(aMeasure isMemberOf: CompositeMeasure)
+	ifTrue: [^(measures allSatisfy: [:each | aMeasure contains: each]) and: [self measureCount = aMeasure measureCount] ].
+	^false.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CompositeMeasure class' category: #'Measure-Solution'!
+CompositeMeasure class
+	instanceVariableNames: ''!
+
+!CompositeMeasure class methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 18:00:03'!
+with: aMesureArray
+	^self new initializeWith: aMesureArray.! !
+
 
 !classDefinition: #Distance category: #'Measure-Solution'!
 Measure subclass: #Distance
@@ -262,11 +314,6 @@ convertTo: otraUnidad
 	^ (otraUnidad scale) * otraUnidad.! !
 
 
-!Distance methodsFor: 'initialization' stamp: 'AM 5/30/2017 10:15:39'!
-initializeWithName: aUnitName scaleWithMeter: aScale amount: aNumber
-	milimetros := aNumber * aScale * 1000.
-	unitName := aUnitName.! !
-
 
 !Distance methodsFor: 'private' stamp: 'AM 5/23/2017 20:53:48'!
 adaptToNumber: aNumber andSend: selector 
@@ -278,11 +325,9 @@ amount
 	^amount.! !
 
 
-!Distance methodsFor: 'intervals' stamp: 'AM 6/6/2017 19:36:13'!
+!Distance methodsFor: 'intervals' stamp: 'AM 6/8/2017 17:22:54'!
 negated
-	^ (-1*amount) * unit
-	
-	"Distance newUnitName: self unit scaleWithMeter: 1 / 1000 amount: 0 - self value."
+	^ (-1*amount) * unit.
 	
 	! !
 
@@ -365,16 +410,6 @@ min: otraDistancia
 		ifTrue: [^self]
 		ifFalse: [^otraDistancia]! !
 
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Distance class' category: #'Measure-Solution'!
-Distance class
-	instanceVariableNames: ''!
-
-!Distance class methodsFor: 'as yet unclassified' stamp: 'AM 6/4/2017 17:29:30'!
-newWithUnit: aUnit andAmount: aNumber
-	^self new initializeWithUnit: aUnit andAmount:aNumber.! !
-
 
 !classDefinition: #Weight category: #'Measure-Solution'!
 Measure subclass: #Weight
@@ -382,6 +417,10 @@ Measure subclass: #Weight
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Measure-Solution'!
+
+!Weight methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 17:54:26'!
++ aMeasure
+	^CompositeMeasure with: #(self aMeasure).! !
 
 !Weight methodsFor: 'as yet unclassified' stamp: 'AM 6/6/2017 20:53:07'!
 = anotherWeight
@@ -402,17 +441,6 @@ initializeWithUnit: anUnit andAmount: aNumber
 value
 
 	^ amount / unit scale.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Weight class' category: #'Measure-Solution'!
-Weight class
-	instanceVariableNames: ''!
-
-!Weight class methodsFor: 'as yet unclassified' stamp: 'AM 6/6/2017 20:45:13'!
-newUnit: anUnit andAmount: aNumber 
-	
-	^self new initializeWithUnit: anUnit andAmount: aNumber.! !
 
 
 !classDefinition: #Unit category: #'Measure-Solution'!
@@ -448,11 +476,6 @@ initializeWithMeasure: aMeasure andUnitName: aUnitName andScale: aScale
 	measure := aMeasure.
 	scale := aScale. ! !
 
-!Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/2/2017 20:52:08'!
-initializeWithName: aName andScale: aScale 
-	unitName _ aName.
-	scale _ aScale.! !
-
 !Unit methodsFor: 'as yet unclassified' stamp: 'AM 6/6/2017 21:29:49'!
 measure
 
@@ -474,8 +497,8 @@ scale
 Unit class
 	instanceVariableNames: ''!
 
-!Unit class methodsFor: 'as yet unclassified' stamp: 'AM 6/6/2017 21:32:56'!
-isAMeasureOf: aMeasure withUnitName: aUnitName andScale: aScale
+!Unit class methodsFor: 'as yet unclassified' stamp: 'AM 6/8/2017 16:38:07'!
+isAMeasureOf: aMeasure withUnitName: aUnitName andScaleWithBase: aScale
 
 	|newUnit|
 	
@@ -483,14 +506,4 @@ isAMeasureOf: aMeasure withUnitName: aUnitName andScale: aScale
 	
 	Smalltalk at: aUnitName asSymbol ifAbsentPut: [newUnit].
 		
-	^newUnit.! !
-
-!Unit class methodsFor: 'as yet unclassified' stamp: 'AM 6/6/2017 20:47:18'!
-newName: aUnitName scaleWithBaseUnit: aScale 
-	|newUnit|
-	
-	newUnit := self new initializeWithName: aUnitName andScale: aScale.
-	
-	Smalltalk at: aUnitName asSymbol ifAbsentPut: [newUnit].
-	
 	^newUnit.! !
