@@ -5,23 +5,27 @@ TestCase subclass: #LibrosTest
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'RC 6/13/2017 10:21:22'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/13/2017 21:21:47'!
 test01aNewCartIsEmpty
 
-	|aCart|
-	
-	aCart _ Cart createCart .
+	|aCart aCatalog|
+	aCatalog _ Set new. 
+
+	aCart _ Cart createCartWithCatalog:  aCatalog .
 	
 	self assert: aCart isEmpty. ! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'RC 6/13/2017 10:21:47'!
-test02AddItemToNewCartThenNotIsEmpty
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/13/2017 21:34:28'!
+test02AddItemToNewCartThenIsNotEmpty
 
-	|aCart aItem| 
+	|aCart aBook aCatalog| 
+	aCatalog _ Bag new.
 	
-	aCart _ Cart createCart.
-	aItem _ Item new.
-	aCart addItem: aItem quantity: 1.
+	aBook _ 'El Padrino'.
+	
+	aCatalog add: aBook.
+	aCart _ Cart createCartWithCatalog: aCatalog.
+	aCart addItem: aBook quantity: 1.
 	
 	self deny: aCart isEmpty.! !
 
@@ -35,8 +39,8 @@ test03AddOneItemToNewCartThenCantItemIsOne
 	aCart addItem: anItem  quantity: 1.
 	self assert: aCart cantItem equals: 1.! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'RC 6/13/2017 11:15:05'!
-test04canNotAddItemWithNotPositiveQuantity
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/13/2017 19:56:01'!
+test04canNotAddItemWithQuantityLowerThanOne
 	
 	|aCart anItem|
 	
@@ -49,30 +53,25 @@ test04canNotAddItemWithNotPositiveQuantity
 
 !classDefinition: #Cart category: #'TusLibros - Solution'!
 Object subclass: #Cart
-	instanceVariableNames: 'cantItem purchase'
+	instanceVariableNames: 'catalog content'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'RC 6/13/2017 11:17:14'!
+!Cart methodsFor: 'as yet unclassified' stamp: 'AM 6/13/2017 21:39:26'!
 addItem: anItem quantity: aQuantity 
 	(aQuantity > 0) ifFalse: [self error: 'Can Not add item with not positive quantity'].
-	cantItem _ cantItem + aQuantity.
-	purchase add: (Association  new key: anItem value: aQuantity).! !
+	(catalog includes: anItem) ifFalse: [self error: 'Can''t add items that aren''t in the catalog'].
+	content add: anItem withOccurrences: aQuantity.! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'RC 6/13/2017 10:49:40'!
-cantItem
-	^cantItem.! !
+!Cart methodsFor: 'as yet unclassified' stamp: 'AM 6/13/2017 21:24:42'!
+initializeCartWithCatalog: aCatalog
+	catalog _ aCatalog.
+	content _ Bag new.! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'RC 6/13/2017 10:21:10'!
-createCartEmpty
-
-	cantItem _ 0.
-	purchase _ Dictionary new.! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'RC 6/13/2017 10:23:10'!
+!Cart methodsFor: 'as yet unclassified' stamp: 'AM 6/13/2017 21:27:21'!
 isEmpty
-	^ cantItem = 0.! !
+	^ content isEmpty.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -85,10 +84,6 @@ createCart
 
 	^self new createCartEmpty.! !
 
-
-!classDefinition: #Item category: #'TusLibros - Solution'!
-Object subclass: #Item
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TusLibros - Solution'!
+!Cart class methodsFor: 'as yet unclassified' stamp: 'AM 6/13/2017 21:23:14'!
+createCartWithCatalog: aCatalog
+	^self new initializeCartWithCatalog: aCatalog.! !

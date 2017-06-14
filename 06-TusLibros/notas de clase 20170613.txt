@@ -1,0 +1,19 @@
+- Si no hay ejemplares, los imprimimos.
+- el catalogo puede ser siempre el mismo
+- si cambia, se crea uno desde 0.
+- los carritos hacen la validacion
+- test con catalog. should raise, si item no esta en el catalogo error.
+- aCart as Bag.
+- la herencia es peigrosa dadod que si se redefine la clase padre, afectaria mi implementacion.
+- test para revisar que 
+- no se puede borrar contenido. No se necesita.
+- contents es una copia del bag dentro del cart.
+- Se esperaban 5 o 6 tests.
+- test Checkout, cashier, carrito vacio.
+- test lista de precios
+- lista de precios podria ser el catalogo.
+- checkout con tarjetaa de credito
+- test validacion tarjeta.
+- vamos a suponer que siempre se puede hacer el debito.
+- Para el jueves se espera tener todo esto resuelto.
+- tes de checkout tiene que correr correctamente sin importar el dia (el conflicto esta en no saber si la tarjeta esta vencida). 
