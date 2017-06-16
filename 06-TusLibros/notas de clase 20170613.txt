@@ -17,3 +17,11 @@
 - vamos a suponer que siempre se puede hacer el debito.
 - Para el jueves se espera tener todo esto resuelto.
 - tes de checkout tiene que correr correctamente sin importar el dia (el conflicto esta en no saber si la tarjeta esta vencida). 
+- libro de ventas para validar que no se haya hecho la venta si no se hizo el checkout.
+- las compras de un usuario podrían ser represetados por un numero.
+- chalten para ¿comparar fechas?
+- la tarjeta debe saber si esta vencida: isExpiredOn:.
+- en constructor de cashier se le debe pasar la fecha de hoy para desacoplarlo del "Date today".
+- considerar modelar al cajero como cajero por venta.
+- checkout retorna ticket. Podría ser representado por un numero. Por ahora.
+- Tests con tarjetas con credito, sin credito, validas , invalidas.
