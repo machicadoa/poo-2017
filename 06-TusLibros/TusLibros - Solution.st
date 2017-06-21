@@ -1,86 +1,84 @@
 !classDefinition: #LibrosTest category: #'TusLibros - Solution'!
 TestCase subclass: #LibrosTest
-	instanceVariableNames: 'elPadrinoBook emptyCartWithEmptyCatalog emptyCartWithOneItemCatalog catalogWithElPadrino emptyCatalog validCreditCard notEmptyCart aUser'
+	instanceVariableNames: 'elPadrinoBook emptyCartWithEmptyCatalog catalogWithElPadrino emptyCatalog validCreditCard emptyCartWithCatalogContainingElPadrino priceListWithElPadrino aClient cartContainingElPadrino'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/19/2017 00:15:09'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/21/2017 00:29:18'!
 setUp
+	
+	PurchaseSystem new: 'TusLibros'.
 	emptyCatalog _ Dictionary new. 
 	emptyCartWithEmptyCatalog  _ 	Cart createCartWithCatalog:  emptyCatalog .
 	elPadrinoBook _ 'El Padrino'.
-	
-	aUser _ 'Frankie'.
-	
 	catalogWithElPadrino  _ Dictionary new.
 	catalogWithElPadrino at: elPadrinoBook put: 10.
-	notEmptyCart _ Cart createCartWithCatalog: catalogWithElPadrino.
-	notEmptyCart addItem: elPadrinoBook quantity: 1.
-	emptyCartWithOneItemCatalog _ Cart createCartWithCatalog: catalogWithElPadrino.
-	validCreditCard _ '4556432754313216'
-
 	
-	
-	
-
-	 ! !
+	priceListWithElPadrino _ catalogWithElPadrino.
+	cartContainingElPadrino _ Cart createCartWithCatalog: catalogWithElPadrino.
+	cartContainingElPadrino addItem: elPadrinoBook quantity: 1.
+	emptyCartWithCatalogContainingElPadrino _ Cart createCartWithCatalog: catalogWithElPadrino.
+	validCreditCard _ '4556432754313216'.
+	aClient _ TusLibros addClient: 'Frankie'.! !
 
 !LibrosTest methodsFor: 'as yet unclassified' stamp: 'RC 6/15/2017 19:25:22'!
 test01aNewCartIsEmpty
 	self assert: emptyCartWithEmptyCatalog isEmpty. ! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/19/2017 00:40:51'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 22:01:24'!
 test02AddItemToNewCartThenIsNotEmpty
-
-	emptyCartWithEmptyCatalog catalog at: elPadrinoBook put: 10.
-	emptyCartWithEmptyCatalog addItem: elPadrinoBook quantity: 1.
+	|newCart newCatalog|
+	newCatalog _ Dictionary new.
+	newCatalog  at: elPadrinoBook put: 10.
 	
-	self deny: emptyCartWithEmptyCatalog isEmpty.! !
+	newCart _ Cart  createCartWithCatalog: newCatalog.
+	newCart addItem: elPadrinoBook quantity: 1.
+	self deny: newCart isEmpty.! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/19/2017 00:41:18'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 22:18:02'!
 test03AddOneItemToNewCartThenCantItemIsOne
+	|newCart newCatalog|
 	
-	emptyCartWithEmptyCatalog catalog at: elPadrinoBook put: 10.
-		
-	emptyCartWithEmptyCatalog addItem: elPadrinoBook quantity: 1.
+	newCatalog _ Dictionary new.
+	newCatalog  at: elPadrinoBook put: 10.
 	
-	self assert: emptyCartWithEmptyCatalog cantItem equals: 1.! !
+	newCart _ Cart  createCartWithCatalog: newCatalog.
+	newCart addItem: elPadrinoBook quantity: 1.
+	self assert: newCart amountOfItems equals: 1.! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/19/2017 00:41:51'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 22:07:28'!
 test04canNotAddItemWithQuantityLowerThanOne
-	emptyCartWithEmptyCatalog catalog at: elPadrinoBook put: 10.
-	
-	self should: [emptyCartWithEmptyCatalog addItem: elPadrinoBook quantity: -1] 
+	self should: [emptyCartWithCatalogContainingElPadrino addItem: elPadrinoBook quantity: -1] 
 	raise: Error 
 	withExceptionDo: [ :msg | self assert: msg messageText equals: 'Can Not add item with not positive quantity'].
 	
-	self assert: emptyCartWithEmptyCatalog isEmpty.! !
+	self assert: emptyCartWithCatalogContainingElPadrino isEmpty.! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'RC 6/15/2017 19:25:45'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 22:20:18'!
 test05canNotAddItemThatArentInCatalog
 	self should: [emptyCartWithEmptyCatalog addItem: elPadrinoBook quantity: 1] 
-	raise: Error 
+	raise: Error - MessageNotUnderstood
 	withExceptionDo: [ :msg | self assert: msg messageText equals: 'Can''t add items that aren''t in the catalog'].
 	
 	self assert: emptyCartWithEmptyCatalog isEmpty.! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'RC 6/15/2017 19:41:53'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 22:10:25'!
 test06canNotAddItemWhenQuantityIsNotInteger
-	self should: [emptyCartWithOneItemCatalog addItem: elPadrinoBook quantity: 1/2] 
+	self should: [emptyCartWithCatalogContainingElPadrino addItem: elPadrinoBook quantity: 1/2] 
 	
-	raise: Error 
+	raise: Error - MessageNotUnderstood
 	
 	withExceptionDo: [ :msg | 
 		
 		self assert: msg messageText equals: 'Can''t add items with invalid quantity'.
 		
-		self assert: emptyCartWithOneItemCatalog isEmpty.
+		self assert: emptyCartWithCatalogContainingElPadrino isEmpty.
 		].
 	
 	! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'RC 6/15/2017 20:14:38'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 22:19:39'!
 test07CartWithOneItemContentsTheSameOneItem
 
 	 |aCart aContent|
@@ -108,19 +106,30 @@ test08canNotCheckOutIfCartIsEmpty
 	withExceptionDo: [ :msg | self assert: msg messageText equals: 'Can''t check out with empty cart'].
 	! !
 
-!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/19/2017 00:40:10'!
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 23:17:04'!
 test09NotEmptyCartCanCheckOut
 	|aCashier finalPrice|
 
-	aCashier _ Cashier checkOut: notEmptyCart forUser: aUser today: (Date newDay: 1  month: 1  year: 2000) withPriceList: catalogWithElPadrino withCard: validCreditCard.
+	aCashier _ Cashier checkOut: cartContainingElPadrino forUser: aClient today: (Date newDay: 1  month: 1  year: 2000) withPriceList: priceListWithElPadrino withCard: validCreditCard.
 	
 	finalPrice _ aCashier checkOut.
 	
-	self assert: finalPrice = (catalogWithElPadrino at: elPadrinoBook).
-"	self assert: finalPrice "
+	self assert: finalPrice = (priceListWithElPadrino at: elPadrinoBook).! !
+
+!LibrosTest methodsFor: 'as yet unclassified' stamp: 'AM 6/21/2017 00:27:43'!
+test10NewClientPurchaseIsRegistered
+
+	|aCashier newClient contents|
 	
+	newClient _ TusLibros addClient: 'Pepe'.
 	
+	contents _ cartContainingElPadrino listCart.
 	
+	aCashier _ Cashier checkOut: cartContainingElPadrino forUser: newClient today: (Date newDay: 1  month: 1  year: 2000) withPriceList: priceListWithElPadrino withCard: validCreditCard.
+	
+	aCashier checkOut.
+	
+	self assert: (TusLibros userPurchases: newClient) = contents.
 	! !
 
 
@@ -137,15 +146,10 @@ addItem: anItem quantity: aQuantity
 
 	content add: anItem withOccurrences: aQuantity.! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'AM 6/14/2017 10:12:36'!
-cantItem
+!Cart methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 22:17:44'!
+amountOfItems
 
 	^content size.! !
-
-!Cart methodsFor: 'as yet unclassified' stamp: 'AM 6/14/2017 10:23:55'!
-catalog
-	
-	^catalog.! !
 
 !Cart methodsFor: 'as yet unclassified' stamp: 'AM 6/13/2017 21:24:42'!
 initializeCartWithCatalog: aCatalog
@@ -189,16 +193,19 @@ Object subclass: #Cashier
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!Cashier methodsFor: 'as yet unclassified' stamp: 'AM 6/19/2017 01:04:05'!
+!Cashier methodsFor: 'as yet unclassified' stamp: 'AM 6/21/2017 00:32:40'!
 checkOut
 |totalPrice|
 	totalPrice _ 0.
 
 	(cart isEmpty ) ifTrue: [self error: 'Can''t check out with empty cart'].
-	
-	cart listCart do: [:book| totalPrice _ totalPrice + (priceList at: book)].
-	
-	^totalPrice.! !
+	TusLibros newPurchase: cart listCart for: cartOwner.
+	^cart listCart inject: totalPrice into: [:total :book | total + (priceList at: book)].! !
+
+!Cashier methodsFor: 'as yet unclassified' stamp: 'RC 6/15/2017 19:22:35'!
+checkOutWith: aCart
+
+	(aCart isEmpty ) ifTrue: [self error: 'Can''t check out with empty cart']! !
 
 !Cashier methodsFor: 'as yet unclassified' stamp: 'AM 6/18/2017 19:39:11'!
 initializeWith: aCart forUser: aUser today: aDate withPriceList: aPriceList withCreditCard: aCreditCard
@@ -241,3 +248,47 @@ checkOut: aCart forUser: aUser today: aDate withPriceList: aPriceList withCard: 
 checkOut: aCart today: aDate withPriceList: aPriceList withCard: aCreditCard
 	
 	^self new initializeWith: aCart today: aDate withPriceList: aPriceList withCreditCard: aCreditCard.! !
+
+
+!classDefinition: #PurchaseSystem category: #'TusLibros - Solution'!
+Object subclass: #PurchaseSystem
+	instanceVariableNames: 'name clients'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros - Solution'!
+
+!PurchaseSystem methodsFor: 'as yet unclassified' stamp: 'AM 6/21/2017 00:03:28'!
+initializeWithName: aString
+	name _ aString.
+	clients _ Dictionary new.! !
+
+!PurchaseSystem methodsFor: 'as yet unclassified' stamp: 'AM 6/21/2017 00:24:57'!
+newPurchase: aCartContent for: aUser
+	
+	(clients at: aUser) addAll: aCartContent.! !
+
+!PurchaseSystem methodsFor: 'as yet unclassified' stamp: 'AM 6/21/2017 00:02:42'!
+userPurchases: aClient 
+	^(clients at: aClient) copy.! !
+
+
+!PurchaseSystem methodsFor: 'associating' stamp: 'AM 6/21/2017 00:07:26'!
+addClient: aString 
+	clients at: aString put: Bag new.
+	^aString.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PurchaseSystem class' category: #'TusLibros - Solution'!
+PurchaseSystem class
+	instanceVariableNames: ''!
+
+!PurchaseSystem class methodsFor: 'as yet unclassified' stamp: 'AM 6/20/2017 23:55:19'!
+new: newSystemName
+	
+	|instance|
+	
+	instance _ self new initializeWithName: newSystemName.
+	Smalltalk at: newSystemName asSymbol put: instance.
+	
+	! !
