@@ -25,3 +25,32 @@
 - considerar modelar al cajero como cajero por venta.
 - checkout retorna ticket. Podría ser representado por un numero. Por ahora.
 - Tests con tarjetas con credito, sin credito, validas , invalidas.
+----------------------------------------------------------------------------------------------------------------------------------
+Jueves 22/06
+- Los tests deben estar en control de todo.
+-Simuladores (Test Double)
+	- Dummy, Ej: nil
+	- Stub, Ej: Merchant Processor
+	- Mock, Ej: 
+	- Fake, EJ: DB in-memory
+- La diff entre Mock y Stub: assert sobre stub son funcionales, asserts sobre mock son implementativos.
+- re edificar: bajar a tierra algo que no lo es.
+
+Adaptador para MerchantProcessor
+- uno para la cara interna y otro para la cara externa.
+- Lo que se esperaba era hacer el de la cara interna.
+- se necesita para los tests con la tarjeta.
+- debit:from: contador para cada vez que se usa este mensaje.
+- Merchant Processor Interface + Merchant Processor Simulator utilizando polimorfismo.
+- testear que cashier no hable con MerchantProcessor cuando la tarjeta está vencida
+- Simulador puede ser implementado por el mismo test: el test debería poder responder al mensaje debit:from:
+- Se podría crear un simulador para cada caso: robada, no tiene credito y "todo bien". Pero se puede generalizar en el modelo mostrado en clase: simulador que se inicializa con un blockClosure.
+
+Interfaz REST de entrada
+- createCArtFor: aClient authenticatedWith: aPassword (retorna Id de carrito)
+- AddToCart:
+- Checkout:
+- test sobre interfaz: createCartFor puede ser testeado haciendo listCart con el id de carrito para validar que sea un carrito valido.
+- test sobre Id de cliente invalido: checkear que se levante excepcion al tratar de operar.
+- test sobre carrito al pasar los 30 min (sin usar delays ni nada parecido).
+- Alrededo de 5 o 6 tests para probar interfaz.
