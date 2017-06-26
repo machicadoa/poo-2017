@@ -115,13 +115,14 @@ test10NewClientPurchaseIsRegistered
 	self assert: (TusLibros userPurchases: newClient) = contents.
 	! !
 
-!LibrosTest methodsFor: 'tests' stamp: 'AM 6/25/2017 15:55:48'!
+!LibrosTest methodsFor: 'tests' stamp: 'RC 6/26/2017 20:29:43'!
 test11ExpiredCardFailsWhileCheckingOut
 
 	|aCashier newClient expiredCreditCard|
 	
 	expiredCreditCard _ CreditCard
-	newCardWithCardNumber: '4539272523124730'
+	newCardWithCardNumber: 4539272523124730
+	withOwner: 'Ricardo Fort'
 	andExpirationDate: self today - 1 days.
 	
 	newClient _ TusLibros addClient: 'Pepe'.
@@ -133,6 +134,32 @@ test11ExpiredCardFailsWhileCheckingOut
 	raise: Error - MessageNotUnderstood 
 	
 	withExceptionDo: [ :msg | self assert: msg messageText equals: 'Can''t check out with expired credit card'].
+	! !
+
+!LibrosTest methodsFor: 'tests' stamp: 'RC 6/26/2017 20:29:54'!
+test12canNotCreateCardWithoutOwner
+	
+	self should: [CreditCard
+					newCardWithCardNumber: 4539272523124730
+					withOwner: ''
+					andExpirationDate: self today - 1 days.] 
+	
+	raise: Error - MessageNotUnderstood 
+	
+	withExceptionDo: [ :msg | self assert: msg messageText equals: 'owner is empty'].
+	! !
+
+!LibrosTest methodsFor: 'tests' stamp: 'RC 6/26/2017 20:34:08'!
+test13canNotCreateCardWithANon16DigitNumber
+	
+	self should: [CreditCard
+					newCardWithCardNumber: 4539272523124
+					withOwner: 'Ricardo Fort'
+					andExpirationDate: self today - 1 days.] 
+	
+	raise: Error - MessageNotUnderstood 
+	
+	withExceptionDo: [ :msg | self assert: msg messageText equals: 'number card invalid'].
 	! !
 
 
@@ -268,7 +295,7 @@ checkOut: aCart forUser: aUser today: aDate withPriceList: aPriceList withCard: 
 
 !classDefinition: #CreditCard category: #'TusLibros - Solution'!
 Object subclass: #CreditCard
-	instanceVariableNames: 'number expiration'
+	instanceVariableNames: 'number expiration owner'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
@@ -279,6 +306,14 @@ initializeCardWithCardNumber: aCardNumber andExpirationDate: aDate
 	number _ aCardNumber.
 	expiration _ aDate.
 
+	! !
+
+!CreditCard methodsFor: 'initialization' stamp: 'RC 6/26/2017 19:58:21'!
+initializeCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: aDate
+
+	number _ aCardNumber.
+	expiration _ aDate.
+	owner _ aOwner .
 	! !
 
 
@@ -295,6 +330,15 @@ CreditCard class
 !CreditCard class methodsFor: 'instance creation' stamp: 'AM 6/25/2017 15:47:43'!
 newCardWithCardNumber: aCardNumber andExpirationDate: aDate 
 	^self new initializeCardWithCardNumber: aCardNumber andExpirationDate: aDate.! !
+
+!CreditCard class methodsFor: 'instance creation' stamp: 'RC 6/26/2017 20:36:10'!
+newCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: aDate 
+
+	(aOwner isEmpty) ifTrue: [self error: 'owner is empty'].
+	
+	(aCardNumber printString  size = 16) ifFalse: [self error: 'number card invalid'].
+	
+	^self new initializeCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: aDate.! !
 
 
 !classDefinition: #PurchaseSystem category: #'TusLibros - Solution'!
