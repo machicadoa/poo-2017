@@ -269,10 +269,14 @@ today
 	^Date newDay: 1 month: 1 year: 2000.! !
 
 
-!LibrosTest methodsFor: 'setup' stamp: 'AM 6/27/2017 01:29:32'!
+!LibrosTest methodsFor: 'setup' stamp: 'AM 6/27/2017 18:31:42'!
 setUp
 	
 	PurchaseSystem newName: 'TusLibros' withCardProcessor: self withProductCatalog: Dictionary new.
+	PurchaseSystem currentOnlineSystem: TusLibros.
+	
+	PurchaseSystem newName: 'EmptySystem' withCardProcessor: self withProductCatalog: Dictionary new.
+	
 	count _ 0.
 	emptyCatalog _ Dictionary new. 
 	emptyCartWithEmptyCatalog  _ Cart createCartWithCatalog:  emptyCatalog .
@@ -357,7 +361,7 @@ Object subclass: #Cashier
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!Cashier methodsFor: 'evaluating' stamp: 'AM 6/27/2017 00:50:46'!
+!Cashier methodsFor: 'evaluating' stamp: 'AM 6/27/2017 18:15:04'!
 checkOut
 	|totalPrice|
 
@@ -367,9 +371,9 @@ checkOut
 
 	self validateCheckout.
 	
-	TusLibros debit: totalPrice from: card.
+	PurchaseSystem currentOnlineSystem debit: totalPrice from: card.
 
-	TusLibros newPurchase: cart for: cartOwner withTotalPrice: totalPrice.
+	PurchaseSystem currentOnlineSystem newPurchase: cart for: cartOwner withTotalPrice: totalPrice.
 	
 	^totalPrice.! !
 
@@ -452,7 +456,6 @@ newCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: aDate
 	
 	^self new initializeCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: aDate.! !
 
-
 
 !classDefinition: #PurchaseSystem category: #'TusLibros - Solution'!
 Object subclass: #PurchaseSystem
@@ -515,6 +518,10 @@ userPurchases: aClient
 	^(clients at: aClient) copy.! !
 
 
+!PurchaseSystem methodsFor: 'inspecting' stamp: 'AM 6/27/2017 18:53:57'!
+clients
+	^clients keys.! !
+
 !PurchaseSystem methodsFor: 'inspecting' stamp: 'AM 6/27/2017 01:28:30'!
 currentCatalog
 
@@ -529,11 +536,12 @@ salesTo: aClient
 debit: anAmount from: aCreditCard 
 	cardProcessor debit: anAmount from: aCreditCard.! !
 
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'PurchaseSystem class' category: #'TusLibros - Solution'!
 PurchaseSystem class
-	instanceVariableNames: ''!
+	instanceVariableNames: 'currentSystem'!
 
 !PurchaseSystem class methodsFor: 'instance creation' stamp: 'AM 6/27/2017 01:31:03'!
 newName: newSystemName withCardProcessor: aCardProcessor withProductCatalog: aCatalog
@@ -543,6 +551,23 @@ newName: newSystemName withCardProcessor: aCardProcessor withProductCatalog: aCa
 	instance _ self new initializeWithName: newSystemName withCardProcessor: aCardProcessor withProductCatalog: aCatalog .
 	Smalltalk at: newSystemName asSymbol put: instance.! !
 
+
+!PurchaseSystem class methodsFor: 'as yet unclassified' stamp: 'AM 6/27/2017 18:11:48'!
+currentSystem: aPurchaseSystem 
+	self shouldBeImplemented! !
+
+
+!PurchaseSystem class methodsFor: 'associating' stamp: 'AM 6/27/2017 18:13:24'!
+currentOnlineSystem: aPurchaseSystem 
+	currentSystem _ aPurchaseSystem.! !
+
+
+!PurchaseSystem class methodsFor: 'accessing' stamp: 'AM 6/27/2017 18:23:16'!
+currentOnlineSystem
+
+	currentSystem isNil ifTrue: [self error: 'there is no current system'].
+	^currentSystem.! !
+
 
 !classDefinition: #UserInterface category: #'TusLibros - Solution'!
 Object subclass: #UserInterface
@@ -551,16 +576,20 @@ Object subclass: #UserInterface
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!UserInterface methodsFor: 'request' stamp: 'AM 6/27/2017 02:06:46'!
+!UserInterface methodsFor: 'request' stamp: 'AM 6/27/2017 18:52:28'!
 createCartFor: aUserName authenticatedWith: aUserPass 
 	
-	|aCart catalog|
+	|aCart catalog systemClients|
 	
-	catalog _ TusLibros currentCatalog.
+	catalog _ PurchaseSystem currentOnlineSystem currentCatalog.
 	
 	aCart _ Cart createCartWithCatalog: catalog.
 	
-	^TusLibros addNewAliveCart: aCart.
+	systemClients _ PurchaseSystem currentOnlineSystem clients.
+	
+	(systemClients includes: aUserName) ifTrue: [^-1].
+	
+	^PurchaseSystem currentOnlineSystem addNewAliveCart: aCart.
 	
 	! !
 
