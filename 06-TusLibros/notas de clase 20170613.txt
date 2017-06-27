@@ -54,3 +54,10 @@ Interfaz REST de entrada
 - test sobre Id de cliente invalido: checkear que se levante excepcion al tratar de operar.
 - test sobre carrito al pasar los 30 min (sin usar delays ni nada parecido).
 - Alrededo de 5 o 6 tests para probar interfaz.
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+Tests faltantes:
+- test con usuario invalido.
+- un test sobre cada funcion indicada en el enunciado.
+- carrito expira a los 30 min.

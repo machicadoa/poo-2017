@@ -1,6 +1,6 @@
 !classDefinition: #LibrosTest category: #'TusLibros - Solution'!
 TestCase subclass: #LibrosTest
-	instanceVariableNames: 'elPadrinoBook emptyCartWithEmptyCatalog catalogWithElPadrino emptyCatalog validCreditCard emptyCartWithCatalogContainingElPadrino priceListWithElPadrino aClient cartContainingElPadrino'
+	instanceVariableNames: 'elPadrinoBook emptyCartWithEmptyCatalog catalogWithElPadrino emptyCatalog validCreditCard emptyCartWithCatalogContainingElPadrino priceListWithElPadrino aClient cartContainingElPadrino aLowFundsClient aLowFundsCreditCard count'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
@@ -76,21 +76,26 @@ test07CartWithOneItemContentsTheSameOneItem
 	
 	self assert: (aContent includes: elPadrinoBook ).! !
 
-!LibrosTest methodsFor: 'tests' stamp: 'AM 6/25/2017 15:53:50'!
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/26/2017 23:49:11'!
 test08canNotCheckOutIfCartIsEmpty
-	|aCashier|
-
+	|aCashier purchaseCostsForAClient purchasesForAClient|
+	purchaseCostsForAClient _ TusLibros salesTo: aClient.
+	purchasesForAClient _ TusLibros userPurchases: aClient.
 	aCashier _ Cashier checkOut: emptyCartWithEmptyCatalog forUser: aClient today: self today withPriceList: emptyCatalog withCard: validCreditCard.
 
 	self should: [aCashier checkOut ] 
 	
 	raise: Error - MessageNotUnderstood 
 	
-	withExceptionDo: [ :msg | self assert: msg messageText equals: 'Can''t check out with empty cart'].
+	withExceptionDo: [ :msg |
+		self assert: msg messageText equals: 'Can''t check out with empty cart'.
+		self assert: (TusLibros salesTo: aClient) = purchaseCostsForAClient.
+		self assert: (TusLibros userPurchases: aClient) = purchasesForAClient.
+		].
 	! !
 
-!LibrosTest methodsFor: 'tests' stamp: 'AM 6/25/2017 15:54:11'!
-test09NotEmptyCartCanCheckOut
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/26/2017 23:53:37'!
+test09SingleItemCartCheckOutReturnsPriceOfCart
 	|aCashier finalPrice|
 
 	aCashier _ Cashier checkOut: cartContainingElPadrino forUser: aClient today: self today withPriceList: priceListWithElPadrino withCard: validCreditCard.
@@ -99,33 +104,43 @@ test09NotEmptyCartCanCheckOut
 	
 	self assert: finalPrice = (priceListWithElPadrino at: elPadrinoBook).! !
 
-!LibrosTest methodsFor: 'tests' stamp: 'AM 6/25/2017 15:54:45'!
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/26/2017 23:39:20'!
 test10NewClientPurchaseIsRegistered
 
-	|aCashier newClient contents|
+	|aCashier newClient contents aValidCreditCard purchaseCost cantOfPurchasesForPepe|
+	
+	aValidCreditCard _ CreditCard newCardWithCardNumber: 1234123412341234 withOwner: 'Pepe' andExpirationDate: self today + 1 days. 
 	
 	newClient _ TusLibros addClient: 'Pepe'.
 	
+	cantOfPurchasesForPepe _ (TusLibros salesTo: newClient) size.
+	
 	contents _ cartContainingElPadrino listCart.
 	
-	aCashier _ Cashier checkOut: cartContainingElPadrino forUser: newClient today: self today withPriceList: priceListWithElPadrino withCard: validCreditCard.
+	aCashier _ Cashier checkOut: cartContainingElPadrino forUser: newClient today: self today withPriceList: priceListWithElPadrino withCard: aValidCreditCard.
 	
-	aCashier checkOut.
+	purchaseCost _ aCashier checkOut.
 	
 	self assert: (TusLibros userPurchases: newClient) = contents.
+	self assert: (TusLibros salesTo: newClient) size = (cantOfPurchasesForPepe + 1).
+	self assert: (TusLibros salesTo: newClient) last = purchaseCost.
 	! !
 
-!LibrosTest methodsFor: 'tests' stamp: 'RC 6/26/2017 20:29:43'!
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/27/2017 00:57:32'!
 test11ExpiredCardFailsWhileCheckingOut
 
-	|aCashier newClient expiredCreditCard|
+	|aCashier newClient expiredCreditCard purchaseCostsForAClient purchasesForAClient debitFromCalls|
 	
 	expiredCreditCard _ CreditCard
 	newCardWithCardNumber: 4539272523124730
 	withOwner: 'Ricardo Fort'
 	andExpirationDate: self today - 1 days.
 	
-	newClient _ TusLibros addClient: 'Pepe'.
+	newClient _ TusLibros addClient: 'Ricardo Fort'.
+	
+	purchaseCostsForAClient _ TusLibros salesTo: newClient.
+	purchasesForAClient _ TusLibros userPurchases: newClient.
+	debitFromCalls _ self amountOfDebitFromCalls.
 	
 	aCashier _ Cashier checkOut: cartContainingElPadrino forUser: newClient today: self today withPriceList: priceListWithElPadrino withCard: expiredCreditCard.
 	
@@ -133,7 +148,12 @@ test11ExpiredCardFailsWhileCheckingOut
 	
 	raise: Error - MessageNotUnderstood 
 	
-	withExceptionDo: [ :msg | self assert: msg messageText equals: 'Can''t check out with expired credit card'].
+	withExceptionDo: [ :msg |
+		self assert: msg messageText equals: 'Can''t check out with expired credit card'.
+		self assert: (TusLibros salesTo: newClient) = purchaseCostsForAClient.
+		self assert: (TusLibros userPurchases: newClient) = purchasesForAClient.
+		self assert: self amountOfDebitFromCalls = debitFromCalls.
+		].
 	! !
 
 !LibrosTest methodsFor: 'tests' stamp: 'RC 6/26/2017 20:29:54'!
@@ -149,7 +169,7 @@ test12canNotCreateCardWithoutOwner
 	withExceptionDo: [ :msg | self assert: msg messageText equals: 'owner is empty'].
 	! !
 
-!LibrosTest methodsFor: 'tests' stamp: 'RC 6/26/2017 20:34:08'!
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/26/2017 21:59:28'!
 test13canNotCreateCardWithANon16DigitNumber
 	
 	self should: [CreditCard
@@ -159,9 +179,89 @@ test13canNotCreateCardWithANon16DigitNumber
 	
 	raise: Error - MessageNotUnderstood 
 	
-	withExceptionDo: [ :msg | self assert: msg messageText equals: 'number card invalid'].
+	withExceptionDo: [ :msg | self assert: msg messageText equals: 'invalid card number length'].
 	! !
 
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/26/2017 22:01:50'!
+test14canNotCreateCardWithANonintegerNumber
+	
+	self should: [CreditCard
+					newCardWithCardNumber: '45A9272523124'
+					withOwner: 'Ricardo Fort'
+					andExpirationDate: self today - 1 days.] 
+	
+	raise: Error - MessageNotUnderstood 
+	
+	withExceptionDo: [ :msg | self assert: msg messageText equals: 'card number is not integer'].
+	! !
+
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/27/2017 00:07:07'!
+test15canNotCheckoutCartIfCartAndCardOwnerAreNotTheSame
+	
+	|newClient aCashier purchaseCostsForAClient purchasesForAClient|
+	
+	newClient _ TusLibros addClient: 'Pepe'.
+	
+	purchaseCostsForAClient _ TusLibros salesTo: newClient.
+	purchasesForAClient _ TusLibros userPurchases: newClient.
+	
+	aCashier _ Cashier checkOut: cartContainingElPadrino forUser: newClient today: self today withPriceList: priceListWithElPadrino withCard: validCreditCard.
+	
+	self should: [aCashier checkOut ] 
+	
+	raise: Error - MessageNotUnderstood 
+	
+	withExceptionDo: [ :msg |
+		self assert: msg messageText equals: 'credit card owner and cart owner are not the same'.
+		self assert: (TusLibros salesTo: aClient) = purchaseCostsForAClient.
+		self assert: (TusLibros userPurchases: aClient) = purchasesForAClient.
+		].
+	! !
+
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/27/2017 00:23:51'!
+test16CannotCheckOutIfFundsAreInsufficient
+
+		|aCashier purchaseCostsForAClient purchasesForAClient|
+	
+	purchaseCostsForAClient _ TusLibros salesTo: aLowFundsClient .
+	purchasesForAClient _ TusLibros userPurchases: aLowFundsClient .
+	
+	aCashier _ Cashier checkOut: cartContainingElPadrino forUser: aLowFundsClient today: self today withPriceList: priceListWithElPadrino withCard: aLowFundsCreditCard.
+	
+	self should: [aCashier checkOut ] 
+	
+	raise: Error - MessageNotUnderstood 
+	
+	withExceptionDo: [ :msg |
+		self assert: msg messageText equals: 'credit card has not enough funds'.
+		self assert: (TusLibros salesTo: aClient) = purchaseCostsForAClient.
+		self assert: (TusLibros userPurchases: aClient) = purchasesForAClient.
+		].! !
+
+!LibrosTest methodsFor: 'tests' stamp: 'AM 6/27/2017 01:45:20'!
+test17cartRequestFromAValidUserResultsInAValidCartId
+
+	|aUserInterface aCartId|
+
+	aUserInterface _ UserInterface new.
+
+	aCartId _ aUserInterface createCartFor: 'Pepe' authenticatedWith: 'pepemaster01'.
+	
+	self assert: (aUserInterface listCart: aCartId) isEmpty.! !
+
+
+!LibrosTest methodsFor: 'Private' stamp: 'AM 6/27/2017 00:54:23'!
+amountOfDebitFromCalls
+
+	count.! !
+
+!LibrosTest methodsFor: 'Private' stamp: 'AM 6/27/2017 00:55:08'!
+debit: amount from: aCreditCard
+
+	count _ count + 1.
+
+	(aCreditCard number = 4556432754313217) ifTrue: [self error: 'credit card has not enough funds'].
+	^true.! !
 
 !LibrosTest methodsFor: 'Private' stamp: 'AM 6/25/2017 15:41:21'!
 today
@@ -169,12 +269,13 @@ today
 	^Date newDay: 1 month: 1 year: 2000.! !
 
 
-!LibrosTest methodsFor: 'setup' stamp: 'AM 6/25/2017 15:49:52'!
+!LibrosTest methodsFor: 'setup' stamp: 'AM 6/27/2017 01:29:32'!
 setUp
 	
-	PurchaseSystem new: 'TusLibros'.
+	PurchaseSystem newName: 'TusLibros' withCardProcessor: self withProductCatalog: Dictionary new.
+	count _ 0.
 	emptyCatalog _ Dictionary new. 
-	emptyCartWithEmptyCatalog  _ 	Cart createCartWithCatalog:  emptyCatalog .
+	emptyCartWithEmptyCatalog  _ Cart createCartWithCatalog:  emptyCatalog .
 	elPadrinoBook _ 'El Padrino'.
 	catalogWithElPadrino  _ Dictionary new.
 	catalogWithElPadrino at: elPadrinoBook put: 10.
@@ -183,8 +284,13 @@ setUp
 	cartContainingElPadrino _ Cart createCartWithCatalog: catalogWithElPadrino.
 	cartContainingElPadrino addItem: elPadrinoBook quantity: 1.
 	emptyCartWithCatalogContainingElPadrino _ Cart createCartWithCatalog: catalogWithElPadrino.
-	validCreditCard _ CreditCard newCardWithCardNumber: '4556432754313216' andExpirationDate: self today + 1 days.
-	aClient _ TusLibros addClient: 'Frankie'.! !
+	aClient _ TusLibros addClient: 'Frankie'.
+	
+	validCreditCard _ CreditCard newCardWithCardNumber: 4556432754313216 withOwner: aClient andExpirationDate: self today + 1 days.
+	
+	aLowFundsClient _ TusLibros addClient: 'Moroso'.
+	
+	aLowFundsCreditCard _ CreditCard newCardWithCardNumber: 4556432754313217 withOwner: aLowFundsClient andExpirationDate: self today + 1 days.! !
 
 
 !classDefinition: #Cart category: #'TusLibros - Solution'!
@@ -251,14 +357,21 @@ Object subclass: #Cashier
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!Cashier methodsFor: 'evaluating' stamp: 'AM 6/24/2017 17:05:37'!
+!Cashier methodsFor: 'evaluating' stamp: 'AM 6/27/2017 00:50:46'!
 checkOut
-|totalPrice|
+	|totalPrice|
+
 	totalPrice _ 0.
-	TusLibros newPurchase: cart listCart for: cartOwner.
-	
+
+	totalPrice _ cart listCart inject: totalPrice into: [:total :book | total + (priceList at: book)].
+
 	self validateCheckout.
-	^cart listCart inject: totalPrice into: [:total :book | total + (priceList at: book)].! !
+	
+	TusLibros debit: totalPrice from: card.
+
+	TusLibros newPurchase: cart for: cartOwner withTotalPrice: totalPrice.
+	
+	^totalPrice.! !
 
 
 !Cashier methodsFor: 'initialization' stamp: 'AM 6/18/2017 19:39:11'!
@@ -271,10 +384,11 @@ initializeWith: aCart forUser: aUser today: aDate withPriceList: aPriceList with
 	cartOwner _ aUser.! !
 
 
-!Cashier methodsFor: 'error handling' stamp: 'AM 6/25/2017 15:44:06'!
+!Cashier methodsFor: 'error handling' stamp: 'AM 6/26/2017 22:14:52'!
 validateCheckout
-	(cart isEmpty) ifTrue: [self error: 'Can''t check out with empty cart'].
-	(card isExpiredOn: self today) ifTrue: [self error: 'Can''t check out with expired credit card'].! !
+	cart isEmpty ifTrue: [self error: 'Can''t check out with empty cart'].
+	(card isExpiredOn: self today) ifTrue: [self error: 'Can''t check out with expired credit card'].
+	card owner = cartOwner ifFalse: [self error: 'credit card owner and cart owner are not the same'].! !
 
 
 !Cashier methodsFor: 'inspecting' stamp: 'AM 6/25/2017 15:45:08'!
@@ -300,14 +414,6 @@ Object subclass: #CreditCard
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!CreditCard methodsFor: 'initialization' stamp: 'AM 6/24/2017 17:38:26'!
-initializeCardWithCardNumber: aCardNumber andExpirationDate: aDate
-
-	number _ aCardNumber.
-	expiration _ aDate.
-
-	! !
-
 !CreditCard methodsFor: 'initialization' stamp: 'RC 6/26/2017 19:58:21'!
 initializeCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: aDate
 
@@ -321,59 +427,107 @@ initializeCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: a
 isExpiredOn: aDate 
 	^expiration < aDate.! !
 
+
+!CreditCard methodsFor: 'private' stamp: 'AM 6/27/2017 00:42:51'!
+number
+	^number.! !
+
+!CreditCard methodsFor: 'private' stamp: 'AM 6/26/2017 22:18:19'!
+owner
+
+	^owner.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'CreditCard class' category: #'TusLibros - Solution'!
 CreditCard class
 	instanceVariableNames: ''!
 
-!CreditCard class methodsFor: 'instance creation' stamp: 'AM 6/25/2017 15:47:43'!
-newCardWithCardNumber: aCardNumber andExpirationDate: aDate 
-	^self new initializeCardWithCardNumber: aCardNumber andExpirationDate: aDate.! !
-
-!CreditCard class methodsFor: 'instance creation' stamp: 'RC 6/26/2017 20:36:10'!
+!CreditCard class methodsFor: 'instance creation' stamp: 'AM 6/26/2017 21:58:42'!
 newCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: aDate 
 
 	(aOwner isEmpty) ifTrue: [self error: 'owner is empty'].
-	
-	(aCardNumber printString  size = 16) ifFalse: [self error: 'number card invalid'].
+	(aCardNumber isKindOf: Integer) ifFalse: [self error: 'card number is not integer'].
+	(aCardNumber asString  size = 16) ifFalse: [self error: 'invalid card number length'].
 	
 	^self new initializeCardWithCardNumber: aCardNumber withOwner: aOwner andExpirationDate: aDate.! !
+
 
 
 !classDefinition: #PurchaseSystem category: #'TusLibros - Solution'!
 Object subclass: #PurchaseSystem
-	instanceVariableNames: 'name clients'
+	instanceVariableNames: 'name clients salesBook cardProcessor catalogWithPrice aliveCarts aliveCartCount'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros - Solution'!
 
-!PurchaseSystem methodsFor: 'initialization' stamp: 'AM 6/21/2017 00:03:28'!
-initializeWithName: aString
+!PurchaseSystem methodsFor: 'initialization' stamp: 'AM 6/27/2017 02:05:18'!
+initializeWithName: aString withCardProcessor: aCardProcessor withProductCatalog: aCatalog
 	name _ aString.
-	clients _ Dictionary new.! !
+	clients _ Dictionary new.
+	salesBook _ Dictionary new.
+	cardProcessor _ aCardProcessor.
+	catalogWithPrice _ aCatalog.
+	aliveCarts _ Dictionary new.
+	aliveCartCount _ 0.! !
 
 
-!PurchaseSystem methodsFor: 'adding' stamp: 'AM 6/25/2017 16:03:00'!
+!PurchaseSystem methodsFor: 'adding' stamp: 'AM 6/27/2017 02:24:04'!
 addClient: aClientName
 
-	|clientPurchases|
+	|clientPurchases clientPurchasesCosts|
 	
 	clientPurchases _ Bag new.
 	
-	clients at: aClientName put: clientPurchases.
+	clientPurchasesCosts _ OrderedCollection new.
+	
+	clients at: aClientName put: clientPurchases.		
+	salesBook at: aClientName put: clientPurchasesCosts.
+	
 	^aClientName.! !
 
-
-!PurchaseSystem methodsFor: 'private' stamp: 'AM 6/21/2017 00:24:57'!
-newPurchase: aCartContent for: aUser
+!PurchaseSystem methodsFor: 'adding' stamp: 'AM 6/27/2017 02:09:03'!
+addNewAliveCart: aCart 
 	
-	(clients at: aUser) addAll: aCartContent.! !
+	aliveCartCount  _ aliveCartCount  + 1.
+	aliveCarts at: aliveCartCount put: aCart.
+	^aliveCartCount.! !
 
+
+!PurchaseSystem methodsFor: 'private' stamp: 'AM 6/26/2017 23:32:58'!
+newPurchase: aCart for: aClient withTotalPrice: totalPrice
+	
+	|cartContent|
+	
+	cartContent _ aCart listCart.
+	
+	(clients at: aClient) addAll: cartContent.
+	(salesBook at: aClient) add: totalPrice.
+	! !
+
+
+!PurchaseSystem methodsFor: 'accessing' stamp: 'AM 6/27/2017 02:15:15'!
+getCart: aCartId
+	^aliveCarts at: aCartId.! !
 
 !PurchaseSystem methodsFor: 'accessing' stamp: 'AM 6/21/2017 00:02:42'!
 userPurchases: aClient 
 	^(clients at: aClient) copy.! !
+
+
+!PurchaseSystem methodsFor: 'inspecting' stamp: 'AM 6/27/2017 01:28:30'!
+currentCatalog
+
+	^catalogWithPrice copy.! !
+
+!PurchaseSystem methodsFor: 'inspecting' stamp: 'AM 6/26/2017 23:45:34'!
+salesTo: aClient
+	^(salesBook at: aClient) copy.! !
+
+
+!PurchaseSystem methodsFor: 'evaluating' stamp: 'AM 6/27/2017 00:42:18'!
+debit: anAmount from: aCreditCard 
+	cardProcessor debit: anAmount from: aCreditCard.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -381,12 +535,40 @@ userPurchases: aClient
 PurchaseSystem class
 	instanceVariableNames: ''!
 
-!PurchaseSystem class methodsFor: 'instance creation' stamp: 'AM 6/20/2017 23:55:19'!
-new: newSystemName
+!PurchaseSystem class methodsFor: 'instance creation' stamp: 'AM 6/27/2017 01:31:03'!
+newName: newSystemName withCardProcessor: aCardProcessor withProductCatalog: aCatalog
 	
 	|instance|
 	
-	instance _ self new initializeWithName: newSystemName.
-	Smalltalk at: newSystemName asSymbol put: instance.
+	instance _ self new initializeWithName: newSystemName withCardProcessor: aCardProcessor withProductCatalog: aCatalog .
+	Smalltalk at: newSystemName asSymbol put: instance.! !
+
+
+!classDefinition: #UserInterface category: #'TusLibros - Solution'!
+Object subclass: #UserInterface
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros - Solution'!
+
+!UserInterface methodsFor: 'request' stamp: 'AM 6/27/2017 02:06:46'!
+createCartFor: aUserName authenticatedWith: aUserPass 
+	
+	|aCart catalog|
+	
+	catalog _ TusLibros currentCatalog.
+	
+	aCart _ Cart createCartWithCatalog: catalog.
+	
+	^TusLibros addNewAliveCart: aCart.
 	
 	! !
+
+
+!UserInterface methodsFor: 'inspecting' stamp: 'AM 6/27/2017 02:14:25'!
+listCart: aCartId
+
+	|aCart|
+
+	aCart _ TusLibros getCart: aCartId.
+	^aCart listCart.! !
