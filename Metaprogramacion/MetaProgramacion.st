@@ -5,8 +5,8 @@ TestCase subclass: #MetaTest
 	poolDictionaries: ''
 	category: 'MetaProgramacion'!
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:25:31'!
-test01
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/4/2017 01:04:12'!
+test01cannotDefineAnInstanceVariableWithEmptyName
 
 	|aEmptyInstanceVariableName variableNames aNewClass|
 
@@ -28,8 +28,8 @@ test01
 			].
 	aNewClass removeFromSystem.! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:26:32'!
-test02
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/4/2017 01:03:06'!
+test02aValidInstanceVariableNameIsAddedAsInstanceVariableInClass
 	
 	|anAddInstVariable aNewVarName aNewClass|
 						
@@ -50,8 +50,8 @@ test02
 	aNewClass removeFromSystem.
 	! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:27:06'!
-test03
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/4/2017 01:00:37'!
+test03cannotDefineAnInvalidInstanceVariable
 	
 	|variableNames aNewVarName aNewClass|
 	
@@ -72,8 +72,8 @@ test03
 								].
 	aNewClass removeFromSystem.! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:28:20'!
-test04
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/4/2017 00:59:03'!
+test04cannotDefineInstanceVariableThatAlreadyExistsInSubClass
 	
 	|variableNames aNewVarName aAddInstVariableInstance aNewClass aNewSubClass|
 	
@@ -107,8 +107,8 @@ test04
 	aNewClass removeFromSystem.	
 	! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:29:27'!
-test05
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/4/2017 00:58:50'!
+test05cannotDefineInstanceVariableThatAlreadyExistsInSuperClass
 	
 	|variableNames aNewVarName aAddInstVariableInstance aNewClass aNewSuperClass|
 	
@@ -143,8 +143,8 @@ test05
 	aNewSuperClass removeFromSystem.	
 	! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:30:06'!
-test06
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/4/2017 00:56:15'!
+test06cannotDefineSameInstanceVariableInClass
 	
 	|variableNames aNewVarName aAddInstVariableInstance aNewClass |
 	
@@ -167,6 +167,38 @@ test06
 		 withExceptionDo:  [ :msg | self assert: msg messageText equals: 'Variable name is already defined'.
 								self assert: variableNames = aNewClass instVarNames.
 								].
+	aNewClass removeFromSystem.! !
+
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/4/2017 00:53:22'!
+test07newVarIsDefinesAsTempThenWarning
+	
+	| aNewMethod aNewVarName aAddInstVariableInstance aNewClass |
+	
+	aNewClass  _  Object subclass: #NuevaClase
+					instanceVariableNames: ''
+					classVariableNames: ''
+					poolDictionaries: ''
+					category: 'MetaProgramacion'.
+	
+	aNewMethod _ 'printPepe
+|name|
+name _ ''Pepe''.
+^''hello '' append: name.'.
+
+	aNewClass compile: aNewMethod.
+	
+	aNewVarName _ 'name'.
+
+	self should: [aAddInstVariableInstance _ AddInstVariable named: aNewVarName in: aNewClass.]
+		 raise: Warning
+		 withExceptionDo:  [ :wng |
+			self assert: wng messageText equals: 'Variable name is included in some of the methods within this class as tempVariables'.
+			wng resume.
+								].
+							
+	aAddInstVariableInstance apply.
+	self assert: (aNewClass instVarNames includes: aNewVarName).
+	
 	aNewClass removeFromSystem.! !
 
 
@@ -196,21 +228,23 @@ apply
 AddInstVariable class
 	instanceVariableNames: ''!
 
-!AddInstVariable class methodsFor: 'instance creation' stamp: 'AM 7/3/2017 23:16:44'!
+!AddInstVariable class methodsFor: 'instance creation' stamp: 'AM 7/4/2017 01:09:41'!
 named: aVariableName in: aClass 
 	
 	|variableNames|
 	
-	(aVariableName isEmpty ) ifTrue: [self error: 'Variable name is empty'].
-	
 	variableNames _ Scanner new scanFieldNames: aVariableName.
+	
+	(variableNames isEmpty ) ifTrue: [self error: 'Variable name is empty'].
 	
 	(aClass instVarNames includes: aVariableName ) ifTrue: [self error: 'Variable name is already defined'].
 	
 	(aClass allSubclasses anySatisfy: [:each | each instVarNames includes: aVariableName]  )  ifTrue: [self error: 'Variable name is defined in subclass'].
 	
-	(aClass allSuperclasses anySatisfy: [:each | each instVarNames includes: aVariableName]  )  ifTrue: [self error: 'Variable name is defined in superClass'].
+	(aClass superclass  instVarNames includes: aVariableName  )  ifTrue: [self error: 'Variable name is defined in superClass'].
 	
 	(variableNames size = 1 and: [(variableNames at: 1) = aVariableName]) ifFalse: [self error: 'Variable name is invalid'].
+	
+	(aClass methodDict values anySatisfy: [:each| each methodNode tempNames includes: aVariableName]) ifTrue: [^Warning new signal: 'Variable name is included in some of the methods within this class as tempVariables'].
 	
 	^self new initializeWithName: aVariableName andClass: aClass .! !
