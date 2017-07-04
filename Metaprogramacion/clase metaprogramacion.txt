@@ -1,0 +1,24 @@
+1)chequear que la variable no es empty
+2)que es válido el nombre (ej no puede empezar con número)
+3)que no exista una igual ya definida en esa clase (o sus superclases o subclases)
+4)Warning si esta definida local
+
+tip: clase scanner. Hace un validacion de string. Scanner new scanfieldName: aString devuelve una version valida del string que le pasaste (en array)
+
+El scanner escanea el texto y lo valida. 
+El Parser se encarga de asegurar que lo que esta leyendo tenga sentido sintactico (Ej: que todo sea Objeto - Mensaje)
+El compilador toma el codigo del parser y lo pasa a codigo de maquina. 
+
+El AST es un resultado generado por un parser (Abstract Syntact Tree)
+Los compile methods te devuelven el AST del metodo
+Al compile method le puedo pedir el method Node (dentro de compiled parser node) 
+Assignament Node asigna los nodos en el AST
+Busco los temp variable node (Eso lo hace el Method Node)
+Method Node me permite obtener los temporales. (MSG TempNames devuelve los nombres de las variables temporales)
+
+Dado un metodo obtenemos el AST (Method Node) y al AST le mandamos TempNames y nos fijamos con Include
+
+Pregunta Parcial sobre TDD: Porque en el ejemplo sugirio crear y eliminar la clase y no utilizar siempre una?
+		El test no estaría en control de los casos de prueba. 
+
+para warning hay que fijarse error: 
