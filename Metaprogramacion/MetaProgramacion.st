@@ -5,7 +5,7 @@ TestCase subclass: #MetaTest
 	poolDictionaries: ''
 	category: 'MetaProgramacion'!
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'RC 6/29/2017 20:59:14'!
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:25:31'!
 test01
 
 	|aEmptyInstanceVariableName variableNames aNewClass|
@@ -26,9 +26,9 @@ test01
 		 withExceptionDo:  [ :msg | self assert: msg messageText equals: 'Variable name is empty'.
 								self assert: variableNames = aNewClass instVarNames.
 			].
-	! !
+	aNewClass removeFromSystem.! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'RC 6/29/2017 21:03:56'!
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:26:32'!
 test02
 	
 	|anAddInstVariable aNewVarName aNewClass|
@@ -46,9 +46,11 @@ test02
 	anAddInstVariable  apply.
 
 	self assert: (aNewClass instVarNames includes: aNewVarName).
+	
+	aNewClass removeFromSystem.
 	! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'RC 6/29/2017 21:04:20'!
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:27:06'!
 test03
 	
 	|variableNames aNewVarName aNewClass|
@@ -68,9 +70,9 @@ test03
 		 withExceptionDo:  [ :msg | self assert: msg messageText equals: 'Variable name is invalid'.
 								self assert: variableNames = aNewClass instVarNames.
 								].
-	! !
+	aNewClass removeFromSystem.! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'RC 6/29/2017 21:05:53'!
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:28:20'!
 test04
 	
 	|variableNames aNewVarName aAddInstVariableInstance aNewClass aNewSubClass|
@@ -100,9 +102,12 @@ test04
 		 withExceptionDo:  [ :msg | self assert: msg messageText equals: 'Variable name is defined in subclass'.
 								self assert: variableNames = aNewClass instVarNames.
 								].
+	aNewSubClass removeFromSystem.
+
+	aNewClass removeFromSystem.	
 	! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'RC 6/29/2017 21:21:27'!
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:29:27'!
 test05
 	
 	|variableNames aNewVarName aAddInstVariableInstance aNewClass aNewSuperClass|
@@ -132,9 +137,13 @@ test05
 		 withExceptionDo:  [ :msg | self assert: msg messageText equals: 'Variable name is defined in superClass'.
 								self assert: variableNames = aNewClass instVarNames.
 								].
+							
+	aNewClass removeFromSystem.
+
+	aNewSuperClass removeFromSystem.	
 	! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:18:20'!
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:30:06'!
 test06
 	
 	|variableNames aNewVarName aAddInstVariableInstance aNewClass |
@@ -158,7 +167,7 @@ test06
 		 withExceptionDo:  [ :msg | self assert: msg messageText equals: 'Variable name is already defined'.
 								self assert: variableNames = aNewClass instVarNames.
 								].
-	! !
+	aNewClass removeFromSystem.! !
 
 
 !classDefinition: #AddInstVariable category: #MetaProgramacion!
@@ -205,19 +214,3 @@ named: aVariableName in: aClass
 	(variableNames size = 1 and: [(variableNames at: 1) = aVariableName]) ifFalse: [self error: 'Variable name is invalid'].
 	
 	^self new initializeWithName: aVariableName andClass: aClass .! !
-
-
-!classDefinition: #NuevaClase category: #MetaProgramacion!
-Object subclass: #NuevaClase
-	instanceVariableNames: 'ab'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'MetaProgramacion'!
-
-
-!classDefinition: #NuevaSubClase category: #MetaProgramacion!
-NuevaClase subclass: #NuevaSubClase
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'MetaProgramacion'!
