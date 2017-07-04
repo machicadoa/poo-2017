@@ -134,7 +134,7 @@ test05
 								].
 	! !
 
-!MetaTest methodsFor: 'as yet unclassified' stamp: 'RC 6/29/2017 21:24:01'!
+!MetaTest methodsFor: 'as yet unclassified' stamp: 'AM 7/3/2017 23:18:20'!
 test06
 	
 	|variableNames aNewVarName aAddInstVariableInstance aNewClass |
@@ -144,14 +144,14 @@ test06
 					classVariableNames: ''
 					poolDictionaries: ''
 					category: 'MetaProgramacion'.
-					
-	variableNames _ aNewClass instVarNames. 
 	
 	aNewVarName _ 'ab'.
 
 	aAddInstVariableInstance _ AddInstVariable named: aNewVarName in: aNewClass.
 	
 	aAddInstVariableInstance  apply.
+	
+	variableNames _ aNewClass instVarNames. 
 	
 	self should: [AddInstVariable named: aNewVarName in: aNewClass]
 		 raise: Error - MessageNotUnderstood 
@@ -187,7 +187,7 @@ apply
 AddInstVariable class
 	instanceVariableNames: ''!
 
-!AddInstVariable class methodsFor: 'instance creation' stamp: 'RC 6/29/2017 21:26:25'!
+!AddInstVariable class methodsFor: 'instance creation' stamp: 'AM 7/3/2017 23:16:44'!
 named: aVariableName in: aClass 
 	
 	|variableNames|
@@ -196,7 +196,7 @@ named: aVariableName in: aClass
 	
 	variableNames _ Scanner new scanFieldNames: aVariableName.
 	
-	(self instVarNames includes: aVariableName ) ifTrue: [self error: 'Variable name is already defined'].
+	(aClass instVarNames includes: aVariableName ) ifTrue: [self error: 'Variable name is already defined'].
 	
 	(aClass allSubclasses anySatisfy: [:each | each instVarNames includes: aVariableName]  )  ifTrue: [self error: 'Variable name is defined in subclass'].
 	
